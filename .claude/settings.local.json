@@ -48,7 +48,9 @@
       "Bash(timeout:*)",
       "Bash(git add:*)",
       "Bash(git push:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(\"venv\\Scripts\\pip.exe\" install requests)",
+      "Bash(\"venv\\Scripts\\pip.exe\" install:*)"
     ],
     "deny": []
   }
