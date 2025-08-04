@@ -9,7 +9,7 @@ pip install -r requirements.txt
 python manage.py migrate
 
 # Load production data (only if database is empty)
-python load_production_data.py
+python load_production_data_corrected.py
 
 # Convert static asset files
 python manage.py collectstatic --no-input
