@@ -1,0 +1,327 @@
+/* Custom admin styles for White Raven Pourhouse */
+
+/* Coffee shop color palette */
+:root {
+    --coffee-brown: #5D4E37;
+    --light-coffee: #8B7355;
+    --cream: #F5F5DC;
+    --coffee-accent: #3E2723;
+    --success-green: #2E7D32;
+    --warning-orange: #F57C00;
+    --danger-red: #D32F2F;
+}
+
+/* Enhanced admin header with coffee shop branding */
+#header {
+    background: linear-gradient(135deg, var(--coffee-brown) 0%, var(--light-coffee) 100%);
+    box-shadow: 0 2px 8px rgba(93, 78, 55, 0.3);
+    position: relative;
+}
+
+#header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="30" cy="25" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="15" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="70" cy="30" r="0.8" fill="rgba(255,255,255,0.1)"/><circle cx="85" cy="5" r="1.2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/* Module headers with coffee theme */
+.module h2, .module caption, .inline-group h2 {
+    background: linear-gradient(90deg, var(--coffee-brown) 0%, var(--light-coffee) 100%);
+    color: #fff;
+    font-weight: 600;
+    padding: 12px 16px;
+    border-radius: 6px 6px 0 0;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+.module h2::before {
+    content: '☕';
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+/* Enhanced breadcrumbs */
+.breadcrumbs {
+    background: var(--cream);
+    border-bottom: 1px solid #ddd;
+    padding: 10px 20px;
+    font-size: 12px;
+}
+
+.breadcrumbs a {
+    color: var(--coffee-brown);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.breadcrumbs a:hover {
+    color: var(--coffee-accent);
+    text-decoration: underline;
+}
+
+/* Form styling improvements */
+.form-row {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 12px 0;
+}
+
+.form-row:last-child {
+    border-bottom: none;
+}
+
+/* Button styling with coffee theme */
+.button, input[type="submit"], .submit-row input, .addlink, .changelink {
+    background: linear-gradient(90deg, var(--coffee-brown) 0%, var(--light-coffee) 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.button:hover, input[type="submit"]:hover, .submit-row input:hover, .addlink:hover, .changelink:hover {
+    background: linear-gradient(90deg, var(--coffee-accent) 0%, var(--coffee-brown) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(93, 78, 55, 0.3);
+}
+
+/* Delete buttons */
+.deletelink, .deletelink-box {
+    background: linear-gradient(90deg, var(--danger-red) 0%, #B71C1C 100%);
+    color: white;
+}
+
+.deletelink:hover, .deletelink-box:hover {
+    background: linear-gradient(90deg, #B71C1C 0%, #8B0000 100%);
+}
+
+/* Table styling */
+.results table {
+    border-collapse: separate;
+    border-spacing: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.results thead th {
+    background: linear-gradient(90deg, var(--coffee-brown) 0%, var(--light-coffee) 100%);
+    color: white;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    border: none;
+    padding: 12px;
+}
+
+.results tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.results tbody tr:hover {
+    background-color: var(--cream);
+    transition: background-color 0.2s ease;
+}
+
+/* Status indicators with coffee theme */
+.field-responded_status {
+    font-weight: bold;
+    text-align: center;
+}
+
+.field-permissions_display span {
+    margin: 2px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.field-years_of_service_display {
+    text-align: center;
+    font-weight: 600;
+}
+
+/* Highlight unresponded contact submissions */
+.admin-contact-submission tr.has-responded-false {
+    background-color: #fff3cd;
+    border-left: 4px solid var(--warning-orange);
+}
+
+/* Style for message preview truncation */
+.field-view_message {
+    max-width: 200px;
+    word-wrap: break-word;
+    font-style: italic;
+    color: #666;
+}
+
+/* Improve spacing for JSON field help text */
+.field-hours .help {
+    font-family: 'Courier New', monospace;
+    background: #f8f9fa;
+    padding: 12px;
+    border-left: 4px solid var(--coffee-brown);
+    margin-top: 8px;
+    border-radius: 0 4px 4px 0;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* Style for contact form subject display */
+.field-display_subject_readonly .readonly {
+    font-weight: bold;
+    color: var(--coffee-brown);
+    background: var(--cream);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+/* Sidebar styling */
+#nav-sidebar {
+    background: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+}
+
+#nav-sidebar .section h2 {
+    background: var(--coffee-brown);
+    color: white;
+    margin: 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+#nav-sidebar .section h2 a {
+    color: white;
+    text-decoration: none;
+}
+
+/* Image preview improvements */
+.field-image_preview img {
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease;
+}
+
+.field-image_preview img:hover {
+    transform: scale(1.1);
+}
+
+/* Inline forms styling */
+.inline-group {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.tabular.inline-related tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* Custom widget styling */
+.datetime input, .date input, .time input {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 10px;
+    transition: border-color 0.3s ease;
+}
+
+.datetime input:focus, .date input:focus, .time input:focus {
+    border-color: var(--coffee-brown);
+    box-shadow: 0 0 0 2px rgba(93, 78, 55, 0.2);
+    outline: none;
+}
+
+/* Help text styling */
+.help {
+    color: #666;
+    font-size: 11px;
+    line-height: 1.4;
+    margin-top: 4px;
+}
+
+/* Error styling */
+.errorlist {
+    background: #ffebee;
+    border: 1px solid var(--danger-red);
+    border-radius: 4px;
+    color: var(--danger-red);
+    padding: 8px 12px;
+    margin: 8px 0;
+}
+
+.errorlist li {
+    list-style: none;
+    font-weight: 500;
+}
+
+/* Success messages */
+.messagelist .success {
+    background: #e8f5e8;
+    border-color: var(--success-green);
+    color: var(--success-green);
+}
+
+/* Warning messages */
+.messagelist .warning {
+    background: #fff8e1;
+    border-color: var(--warning-orange);
+    color: var(--warning-orange);
+}
+
+/* Filter sidebar */
+#changelist-filter {
+    background: #f8f9fa;
+    border-left: 1px solid #ddd;
+}
+
+#changelist-filter h3 {
+    background: var(--coffee-brown);
+    color: white;
+    margin: 0;
+    padding: 8px 15px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Search bar styling */
+#toolbar #searchbar {
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    padding: 8px 12px;
+    transition: border-color 0.3s ease;
+}
+
+#toolbar #searchbar:focus {
+    border-color: var(--coffee-brown);
+    box-shadow: 0 0 0 2px rgba(93, 78, 55, 0.2);
+    outline: none;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .dashboard-metrics {
+        grid-template-columns: 1fr;
+    }
+    
+    .results table {
+        font-size: 12px;
+    }
+    
+    .field-permissions_display span {
+        font-size: 9px;
+        padding: 1px 4px;
+    }
+}

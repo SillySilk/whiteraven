@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Page Not Found - White Raven Pourhouse{% endblock %}
+
+{% block content %}
+<div class="container section-padding text-center">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="error-content">
+                <h1 class="display-1 text-coffee mb-4">404</h1>
+                <h2 class="mb-4">Oops! Page Not Found</h2>
+                <p class="lead text-muted mb-4">
+                    Sorry, but the page you were looking for doesn't exist. 
+                    Maybe you'd like to grab a coffee instead?
+                </p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{% url 'core:home' %}" class="btn btn-coffee btn-lg me-md-2">
+                        <i class="bi bi-house-fill me-2"></i>Go Home
+                    </a>
+                    <a href="{% url 'menu:menu_list' %}" class="btn btn-outline-coffee btn-lg">
+                        <i class="bi bi-journal-text me-2"></i>View Menu
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Coffee cup animation (decorative) -->
+<div class="text-center mt-5">
+    <i class="bi bi-cup-hot-fill text-coffee" style="font-size: 4rem; opacity: 0.3;"></i>
+</div>
+{% endblock %}

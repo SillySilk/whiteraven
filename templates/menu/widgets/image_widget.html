@@ -1,0 +1,397 @@
+{% load static %}
+
+<div class="menu-image-widget" data-field-name="{{ widget.name }}">
+    <!-- Current Image Preview -->
+    {% if widget.value %}
+    <div class="current-image-preview mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="image-preview-container">
+                    <img src="{{ widget.value }}" 
+                         alt="Current menu item image" 
+                         class="img-fluid rounded shadow-sm current-image"
+                         style="max-height: 200px; object-fit: cover;">
+                    <div class="image-overlay">
+                        <div class="image-actions">
+                            {% if widget.is_required %}
+                            <button type="button" class="btn btn-sm btn-outline-light change-image-btn">
+                                <i class="bi bi-pencil"></i> Change
+                            </button>
+                            {% else %}
+                            <button type="button" class="btn btn-sm btn-outline-light change-image-btn">
+                                <i class="bi bi-pencil"></i> Change
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-image-btn">
+                                <i class="bi bi-trash"></i> Remove
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="image-info">
+                    <h6 class="mb-2">Current Image</h6>
+                    <div class="image-details text-muted small">
+                        <div class="mb-1">
+                            <i class="bi bi-link-45deg"></i>
+                            <a href="{{ widget.value }}" target="_blank" class="text-decoration-none">
+                                View full size
+                            </a>
+                        </div>
+                        <div class="image-recommendations">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>Image tips:</strong>
+                            <ul class="mb-0 mt-1">
+                                <li>Use high-quality, well-lit photos</li>
+                                <li>Square or landscape orientation works best</li>
+                                <li>Minimum recommended size: 400×300 pixels</li>
+                                <li>Images will be automatically optimized</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- File Input Section -->
+    <div class="file-input-section {% if widget.value %}d-none{% endif %}">
+        <div class="upload-area border-2 border-dashed rounded p-4 text-center">
+            <div class="upload-icon mb-3">
+                <i class="bi bi-cloud-upload fs-1 text-muted"></i>
+            </div>
+            
+            <div class="upload-instructions mb-3">
+                <h6>Upload Menu Item Image</h6>
+                <p class="text-muted mb-2">
+                    Drag and drop an image here, or click to select a file
+                </p>
+                <small class="text-muted">
+                    Supported formats: JPEG, PNG, WebP • Maximum size: 5MB
+                </small>
+            </div>
+            
+            <!-- Hidden file input -->
+            <input type="file" 
+                   name="{{ widget.name }}" 
+                   {% if widget.attrs.accept %}accept="{{ widget.attrs.accept }}"{% endif %}
+                   {% if widget.attrs.capture %}capture="{{ widget.attrs.capture }}"{% endif %}
+                   class="d-none file-input"
+                   {% if widget.attrs.id %}id="{{ widget.attrs.id }}"{% endif %}>
+            
+            <button type="button" class="btn btn-primary choose-file-btn">
+                <i class="bi bi-folder2-open me-2"></i>Choose File
+            </button>
+            
+            {% if not widget.is_required %}
+            <div class="mt-2">
+                <small class="text-muted">or</small>
+                <button type="button" class="btn btn-sm btn-outline-secondary generate-placeholder-btn ms-2">
+                    <i class="bi bi-image me-1"></i>Generate Placeholder
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- New Image Preview (for uploads) -->
+    <div class="new-image-preview d-none">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="image-preview-container">
+                    <img src="" alt="New image preview" class="img-fluid rounded shadow-sm new-image" 
+                         style="max-height: 200px; object-fit: cover;">
+                    <div class="image-overlay">
+                        <div class="image-actions">
+                            <button type="button" class="btn btn-sm btn-outline-light change-new-image-btn">
+                                <i class="bi bi-pencil"></i> Change
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger cancel-upload-btn">
+                                <i class="bi bi-x"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="image-info">
+                    <h6 class="mb-2">New Image Selected</h6>
+                    <div class="file-details mb-2">
+                        <div class="file-name text-muted small mb-1"></div>
+                        <div class="file-size text-muted small mb-1"></div>
+                        <div class="file-dimensions text-muted small"></div>
+                    </div>
+                    <div class="processing-info">
+                        <div class="alert alert-info alert-sm mb-0">
+                            <i class="bi bi-gear"></i>
+                            <small>Image will be automatically optimized when saved</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Clear checkbox (hidden by default, shown when needed) -->
+    {% if not widget.is_required and widget.value %}
+    <div class="clear-checkbox d-none mt-2">
+        <label class="form-check-label">
+            <input type="checkbox" name="{{ widget.name }}-clear" class="form-check-input me-2">
+            Remove current image
+        </label>
+    </div>
+    {% endif %}
+    
+    <!-- Error display -->
+    <div class="image-errors mt-2"></div>
+</div>
+
+<style>
+.menu-image-widget {
+    position: relative;
+}
+
+.image-preview-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.375rem;
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.image-preview-container:hover .image-overlay {
+    opacity: 1;
+}
+
+.upload-area {
+    border-color: #dee2e6;
+    background-color: #f8f9fa;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.upload-area:hover {
+    border-color: #0d6efd;
+    background-color: #f0f8ff;
+}
+
+.upload-area.dragover {
+    border-color: #0d6efd;
+    background-color: #e7f3ff;
+    transform: scale(1.02);
+}
+
+.image-recommendations ul {
+    font-size: 0.8rem;
+    padding-left: 1.2rem;
+}
+
+.alert-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.file-input {
+    position: absolute !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const widget = document.querySelector('.menu-image-widget[data-field-name="{{ widget.name }}"]');
+    if (!widget) return;
+    
+    const fileInput = widget.querySelector('.file-input');
+    const uploadArea = widget.querySelector('.upload-area');
+    const chooseFileBtn = widget.querySelector('.choose-file-btn');
+    const changeImageBtn = widget.querySelector('.change-image-btn');
+    const removeImageBtn = widget.querySelector('.remove-image-btn');
+    const generatePlaceholderBtn = widget.querySelector('.generate-placeholder-btn');
+    const changeNewImageBtn = widget.querySelector('.change-new-image-btn');
+    const cancelUploadBtn = widget.querySelector('.cancel-upload-btn');
+    
+    const currentImagePreview = widget.querySelector('.current-image-preview');
+    const fileInputSection = widget.querySelector('.file-input-section');
+    const newImagePreview = widget.querySelector('.new-image-preview');
+    const clearCheckbox = widget.querySelector('.clear-checkbox');
+    const errorsDiv = widget.querySelector('.image-errors');
+    
+    // File input change handler
+    if (fileInput) {
+        fileInput.addEventListener('change', handleFileSelect);
+    }
+    
+    // Button click handlers
+    if (chooseFileBtn) {
+        chooseFileBtn.addEventListener('click', () => fileInput.click());
+    }
+    
+    if (changeImageBtn) {
+        changeImageBtn.addEventListener('click', showFileInput);
+    }
+    
+    if (removeImageBtn) {
+        removeImageBtn.addEventListener('click', removeCurrentImage);
+    }
+    
+    if (changeNewImageBtn) {
+        changeNewImageBtn.addEventListener('click', () => fileInput.click());
+    }
+    
+    if (cancelUploadBtn) {
+        cancelUploadBtn.addEventListener('click', cancelUpload);
+    }
+    
+    // Drag and drop handlers
+    if (uploadArea) {
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleDrop);
+        uploadArea.addEventListener('click', () => fileInput.click());
+    }
+    
+    function handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (file) {
+            validateAndPreviewFile(file);
+        }
+    }
+    
+    function handleDragOver(e) {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    }
+    
+    function handleDragLeave(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+    }
+    
+    function handleDrop(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+            fileInput.files = files; // Set the file input
+            validateAndPreviewFile(file);
+        }
+    }
+    
+    function validateAndPreviewFile(file) {
+        clearErrors();
+        
+        // Basic validation
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        
+        if (!allowedTypes.includes(file.type)) {
+            showError('Please select a valid image file (JPEG, PNG, or WebP)');
+            return;
+        }
+        
+        if (file.size > maxSize) {
+            showError('File size too large. Please select an image smaller than 5MB.');
+            return;
+        }
+        
+        // Show preview
+        previewNewImage(file);
+    }
+    
+    function previewNewImage(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imgElement = newImagePreview.querySelector('.new-image');
+            imgElement.src = e.target.result;
+            
+            // Update file details
+            const fileName = newImagePreview.querySelector('.file-name');
+            const fileSize = newImagePreview.querySelector('.file-size');
+            const fileDimensions = newImagePreview.querySelector('.file-dimensions');
+            
+            if (fileName) fileName.textContent = `File: ${file.name}`;
+            if (fileSize) fileSize.textContent = `Size: ${formatFileSize(file.size)}`;
+            
+            // Get image dimensions
+            const img = new Image();
+            img.onload = function() {
+                if (fileDimensions) {
+                    fileDimensions.textContent = `Dimensions: ${this.width} × ${this.height} pixels`;
+                }
+            };
+            img.src = e.target.result;
+            
+            // Show new image preview, hide others
+            if (currentImagePreview) currentImagePreview.classList.add('d-none');
+            if (fileInputSection) fileInputSection.classList.add('d-none');
+            newImagePreview.classList.remove('d-none');
+        };
+        reader.readAsDataURL(file);
+    }
+    
+    function showFileInput() {
+        if (currentImagePreview) currentImagePreview.classList.add('d-none');
+        if (fileInputSection) fileInputSection.classList.remove('d-none');
+        if (newImagePreview) newImagePreview.classList.add('d-none');
+    }
+    
+    function removeCurrentImage() {
+        if (clearCheckbox) {
+            const checkbox = clearCheckbox.querySelector('input[type="checkbox"]');
+            checkbox.checked = true;
+            clearCheckbox.classList.remove('d-none');
+        }
+        
+        if (currentImagePreview) currentImagePreview.classList.add('d-none');
+        if (fileInputSection) fileInputSection.classList.remove('d-none');
+    }
+    
+    function cancelUpload() {
+        fileInput.value = '';
+        
+        if (currentImagePreview && !clearCheckbox?.querySelector('input[type="checkbox"]')?.checked) {
+            currentImagePreview.classList.remove('d-none');
+            fileInputSection.classList.add('d-none');
+        } else {
+            fileInputSection.classList.remove('d-none');
+        }
+        
+        newImagePreview.classList.add('d-none');
+        clearErrors();
+    }
+    
+    function showError(message) {
+        errorsDiv.innerHTML = `<div class="alert alert-danger alert-sm">${message}</div>`;
+    }
+    
+    function clearErrors() {
+        errorsDiv.innerHTML = '';
+    }
+    
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+});
+</script>

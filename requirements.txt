@@ -1,0 +1,15 @@
+# Core Django framework
+Django==5.2.4
+
+# Image processing for menu item photos
+Pillow==11.1.0
+
+# MySQL database adapter for PythonAnywhere
+mysqlclient==2.2.6
+
+# Additional utilities that may be needed
+python-decouple==3.8
+pytz==2024.1
+
+# For development and testing
+django-extensions==3.2.3

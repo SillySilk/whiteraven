@@ -1,0 +1,137 @@
+{% extends "admin/index.html" %}
+{% load i18n static admin_urls %}
+
+{% block extrahead %}{{ block.super }}
+<style>
+    .dashboard-metric {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 10px 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    .dashboard-metric h3 {
+        margin: 0 0 10px 0;
+        color: #5D4E37;
+        font-size: 16px;
+    }
+    .dashboard-metric .number {
+        font-size: 32px;
+        font-weight: bold;
+        color: #2E7D32;
+        display: block;
+        margin: 10px 0;
+    }
+    .dashboard-metric .label {
+        color: #666;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .dashboard-metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+    }
+    .quick-actions {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+    .quick-actions h3 {
+        margin: 0 0 15px 0;
+        color: #5D4E37;
+        font-size: 16px;
+    }
+    .quick-actions a {
+        display: inline-block;
+        background: #5D4E37;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        margin: 5px 10px 5px 0;
+        font-size: 12px;
+    }
+    .quick-actions a:hover {
+        background: #4A3E2A;
+    }
+    .coffee-welcome {
+        background: linear-gradient(135deg, #8B7355 0%, #5D4E37 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        text-align: center;
+    }
+    .coffee-welcome h2 {
+        margin: 0 0 5px 0;
+        font-family: 'Georgia', serif;
+    }
+    .coffee-welcome p {
+        margin: 0;
+        opacity: 0.9;
+        font-style: italic;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="coffee-welcome">
+    <h2>☕ Welcome to White Raven Pourhouse Admin</h2>
+    <p>Manage your coffee house with ease</p>
+</div>
+
+<div class="dashboard-metrics">
+    <div class="dashboard-metric">
+        <h3>📋 Menu Items</h3>
+        <span class="number">{{ menu_stats.total_items }}</span>
+        <div class="label">{{ menu_stats.available_items }} Available</div>
+    </div>
+    
+    <div class="dashboard-metric">
+        <h3>👥 Staff Members</h3>
+        <span class="number">{{ staff_stats.total_employees }}</span>
+        <div class="label">{{ staff_stats.active_employees }} Active</div>
+    </div>
+    
+    <div class="dashboard-metric">
+        <h3>📅 This Week's Shifts</h3>
+        <span class="number">{{ schedule_stats.this_week_shifts }}</span>
+        <div class="label">{{ schedule_stats.total_hours }}h Scheduled</div>
+    </div>
+    
+    <div class="dashboard-metric">
+        <h3>✉️ Contact Forms</h3>
+        <span class="number">{{ contact_stats.unresponded_count }}</span>
+        <div class="label">Pending Response</div>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <h3>🚀 Quick Actions</h3>
+    <a href="{% url 'admin:menu_menuitem_add' %}">➕ Add Menu Item</a>
+    <a href="{% url 'admin:staff_employee_add' %}">👤 Add Employee</a>
+    <a href="{% url 'admin:staff_schedule_add' %}">📅 Create Schedule</a>
+    <a href="{% url 'admin:core_businessinfo_changelist' %}">🏪 Business Info</a>
+    <a href="{% url 'admin:core_contactsubmission_changelist' %}">📧 Contact Forms</a>
+</div>
+
+{% if recent_activity %}
+<div class="module">
+    <h2>Recent Activity</h2>
+    <ul>
+        {% for activity in recent_activity %}
+        <li>{{ activity.timestamp|date:"M d, H:i" }} - {{ activity.description }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{{ block.super }}
+{% endblock %}

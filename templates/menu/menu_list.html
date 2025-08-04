@@ -1,0 +1,669 @@
+{% extends 'base.html' %}
+{% load static menu_image_tags %}
+
+{% block title %}Our Menu - {{ business_info.name|default:"White Raven Pourhouse" }}{% endblock %}
+
+{% block meta_description %}Explore our full menu of exceptional coffee, delicious food, and specialty drinks at White Raven Pourhouse in Felton, CA.{% endblock %}
+
+{% block content %}
+<!-- Menu Header -->
+<section class="menu-header bg-light py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">Our Menu</h1>
+                <p class="lead text-muted">
+                    Discover our carefully crafted selection of coffee, food, and specialty drinks. 
+                    Every item is made with love and the finest ingredients.
+                </p>
+                
+                {% if total_items %}
+                <p class="mb-0">
+                    <i class="bi bi-journal-text me-2"></i>
+                    <strong>{{ total_items }}</strong> item{{ total_items|pluralize }} available
+                    {% if selected_category %}in {{ selected_category.name }}{% endif %}
+                </p>
+                {% endif %}
+            </div>
+            
+            <div class="col-lg-4 text-lg-end">
+                <div class="menu-stats bg-white rounded-3 p-4 shadow-sm">
+                    <h5 class="mb-3">Quality Coffee & More</h5>
+                    <p class="text-muted mb-0">Fresh brewed daily with the finest ingredients</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Menu Items -->
+<section class="menu-items py-5">
+    <div class="container">
+        <div id="menu-items-container">
+        {% if menu_by_category %}
+            {% for category_name, items in menu_by_category.items %}
+            <div class="category-section mb-5">
+                <div class="category-header mb-4">
+                    <h2 class="category-title border-bottom pb-2">
+                        <i class="bi bi-tag-fill text-primary me-2"></i>
+                        {{ category_name }}
+                    </h2>
+                </div>
+                
+                <div class="row g-4">
+                    {% for item in items %}
+                    <div class="col-lg-6">
+                        <div class="menu-item-card card h-100 shadow-sm">
+                            <div class="row g-0 h-100">
+                                <div class="col-md-4">
+                                    <div class="menu-image-container h-100" style="min-height: 150px;">
+                                        {% if item.image %}
+                                            <img src="{{ item.image.url }}" class="img-fluid h-100 w-100 menu-card-image" alt="{{ item.base_name }}" style="object-fit: cover;">
+                                        {% else %}
+                                            <div class="d-flex align-items-center justify-content-center h-100 bg-light text-muted">
+                                                <i class="bi bi-image fs-2"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-8">
+                                    <div class="card-body d-flex flex-column h-100">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h5 class="card-title mb-0">{{ item.base_name }}</h5>
+                                            <span class="badge bg-primary fs-6 ms-2">{{ item.price_display }}</span>
+                                        </div>
+                                        
+                                        <p class="card-text text-muted flex-grow-1">{{ item.description }}</p>
+                                        
+                                        <!-- Size & Price Breakdown -->
+                                        {% if item.sizes|length > 1 %}
+                                        <div class="size-options mb-3">
+                                            <h6 class="text-muted mb-2"><small>Available Sizes:</small></h6>
+                                            <div class="row g-1">
+                                                {% for size_info in item.sizes %}
+                                                <div class="col-4">
+                                                    <div class="text-center p-2 bg-light rounded">
+                                                        <div class="fw-bold small">{{ size_info.size }}</div>
+                                                        <div class="text-primary small">{{ size_info.display_price }}</div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <!-- Item Details -->
+                                        <div class="item-details mt-auto">
+                                            <div class="d-flex flex-wrap gap-2 mb-2">
+                                                {% if item.contains_caffeine %}
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="bi bi-lightning-charge-fill me-1"></i>Caffeine
+                                                </span>
+                                                {% endif %}
+                                                
+                                                {% if item.temperature != 'both' %}
+                                                <span class="badge bg-info">{{ item.get_temperature_display }}</span>
+                                                {% endif %}
+                                                
+                                                {% if item.size != 'one_size' %}
+                                                <span class="badge bg-secondary">{{ item.get_size_display }}</span>
+                                                {% endif %}
+                                                
+                                                {% if item.preparation_time %}
+                                                <span class="badge bg-light text-dark">
+                                                    <i class="bi bi-clock me-1"></i>{{ item.preparation_time }} min
+                                                </span>
+                                                {% endif %}
+                                            </div>
+                                            
+                                            {% if item.dietary_notes %}
+                                            <small class="text-success d-block mb-2">
+                                                <i class="bi bi-check-circle me-1"></i>{{ item.dietary_notes }}
+                                            </small>
+                                            {% endif %}
+                                            
+                                            {% if item.calories %}
+                                            <small class="text-muted d-block">
+                                                <i class="bi bi-speedometer2 me-1"></i>{{ item.calories }} calories
+                                            </small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <!-- No Items Found -->
+            <div class="text-center py-5">
+                <i class="bi bi-search display-1 text-muted mb-3"></i>
+                <h3>No items found</h3>
+                <p class="text-muted mb-4">
+                    {% if search_query %}
+                        Try adjusting your search terms or browse all categories.
+                    {% else %}
+                        No menu items are currently available.
+                    {% endif %}
+                </p>
+                
+                {% if search_query %}
+                <a href="{% url 'menu:menu_list' %}" class="btn btn-primary">
+                    <i class="bi bi-arrow-left me-2"></i>View All Items
+                </a>
+                {% endif %}
+            </div>
+        {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Menu CTA -->
+<section class="menu-cta bg-primary text-white py-5">
+    <div class="container text-center">
+        <h3 class="mb-3">Can't Decide?</h3>
+        <p class="lead mb-4">Our friendly staff is always happy to make recommendations based on your preferences!</p>
+        
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <a href="{% url 'core:contact' %}" class="btn btn-light btn-lg">
+                <i class="bi bi-chat-dots me-2"></i>Ask Us
+            </a>
+            
+            {% if business_info.phone %}
+            <a href="tel:{{ business_info.phone }}" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-telephone me-2"></i>Call Us
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.menu-item-card {
+    transition: transform 0.2s ease-in-out;
+    border: none;
+    overflow: hidden;
+}
+
+.menu-image-container {
+    position: relative;
+    overflow: hidden;
+    background-color: #f8f9fa;
+}
+
+.menu-card-image {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    min-height: 150px;
+    transition: transform 0.3s ease;
+}
+
+.menu-item-card:hover .menu-card-image {
+    transform: scale(1.05);
+}
+
+.menu-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+.placeholder-image {
+    filter: opacity(0.7);
+}
+
+.menu-item-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.category-title {
+    font-size: 1.8rem;
+    color: #333;
+}
+
+.btn-group .btn {
+    border-radius: 0;
+    margin-right: 1px;
+}
+
+.btn-group .btn:first-child {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+}
+
+.btn-group .btn:last-child {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+    margin-right: 0;
+}
+
+.menu-stats {
+    border: 1px solid #e9ecef;
+}
+
+.badge.bg-outline-primary {
+    background-color: transparent !important;
+    border: 1px solid var(--bs-primary);
+    color: var(--bs-primary);
+}
+
+@media (max-width: 768px) {
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+    
+    .btn-group .btn {
+        margin-right: 0;
+        border-radius: 0.375rem !important;
+        margin-bottom: 0.25rem;
+    }
+}
+
+.filter-remove {
+    cursor: pointer;
+}
+
+.filter-remove:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Filter state management
+    let filterState = {
+        category: '{{ selected_category.slug|default:"all" }}',
+        search: '{{ search_query|default:"" }}',
+        temperature: '{{ temperature_filter|default:"all" }}',
+        caffeine: '{{ caffeine_filter|default:"all" }}',
+        dietary: '{{ dietary_filter|default:"all" }}',
+        price_min: {{ price_min|default:min_price }},
+        price_max: {{ price_max|default:max_price }},
+        sort: '{{ sort_by|default:"category" }}'
+    };
+    
+    // Elements
+    const searchInput = document.getElementById('search-input');
+    const priceMinSlider = document.getElementById('price-min');
+    const priceMaxSlider = document.getElementById('price-max');
+    const priceDisplay = document.getElementById('price-range-display');
+    const menuContainer = document.getElementById('menu-items-container');
+    const resultsCount = document.getElementById('results-count');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const activeFiltersSection = document.getElementById('active-filters-section');
+    const activeFiltersList = document.getElementById('active-filters-list');
+    
+    // Debounce function for search input
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+    
+    // Update price range display
+    function updatePriceDisplay() {
+        const min = parseFloat(priceMinSlider.value);
+        const max = parseFloat(priceMaxSlider.value);
+        
+        // Ensure min is not greater than max
+        if (min > max) {
+            if (this === priceMinSlider) {
+                priceMaxSlider.value = min;
+            } else {
+                priceMinSlider.value = max;
+            }
+        }
+        
+        filterState.price_min = parseFloat(priceMinSlider.value);
+        filterState.price_max = parseFloat(priceMaxSlider.value);
+        priceDisplay.textContent = `${filterState.price_min.toFixed(2)} - ${filterState.price_max.toFixed(2)}`;
+        
+        applyFilters();
+    }
+    
+    // Apply filters via AJAX
+    async function applyFilters() {
+        loadingSpinner.classList.remove('d-none');
+        
+        const params = new URLSearchParams();
+        Object.keys(filterState).forEach(key => {
+            if (filterState[key] !== 'all' && filterState[key] !== '') {
+                params.append(key, filterState[key]);
+            }
+        });
+        
+        try {
+            const response = await fetch(`{% url 'menu:menu_filter_ajax' %}?${params.toString()}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
+            const data = await response.json();
+            updateMenuDisplay(data.items);
+            updateResultsCount(data.total_count);
+            updateActiveFilters();
+            updateURL();
+            
+        } catch (error) {
+            console.error('Error fetching filtered menu:', error);
+        } finally {
+            loadingSpinner.classList.add('d-none');
+        }
+    }
+    
+    // Update menu display
+    function updateMenuDisplay(items) {
+        if (items.length === 0) {
+            menuContainer.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="bi bi-search display-1 text-muted mb-3"></i>
+                    <h3>No items found</h3>
+                    <p class="text-muted mb-4">
+                        Try adjusting your filters or search terms.
+                    </p>
+                    <button class="btn btn-primary" id="reset-filters">
+                        <i class="bi bi-arrow-clockwise me-2"></i>Reset All Filters
+                    </button>
+                </div>
+            `;
+            return;
+        }
+        
+        // Group items by category or show as list
+        let html = '';
+        if (filterState.sort === 'category') {
+            const groupedItems = {};
+            items.forEach(item => {
+                if (!groupedItems[item.category]) {
+                    groupedItems[item.category] = [];
+                }
+                groupedItems[item.category].push(item);
+            });
+            
+            Object.keys(groupedItems).forEach(categoryName => {
+                html += renderCategory(categoryName, groupedItems[categoryName]);
+            });
+        } else {
+            html = renderCategory('Search Results', items);
+        }
+        
+        menuContainer.innerHTML = html;
+    }
+    
+    // Render category section
+    function renderCategory(categoryName, items) {
+        let html = `
+            <div class="category-section mb-5">
+                <div class="category-header mb-4">
+                    <h2 class="category-title border-bottom pb-2">
+                        <i class="bi bi-tag-fill text-primary me-2"></i>
+                        ${categoryName}
+                    </h2>
+                </div>
+                <div class="row g-4">
+        `;
+        
+        items.forEach(item => {
+            html += renderMenuItem(item);
+        });
+        
+        html += '</div></div>';
+        return html;
+    }
+    
+    // Render individual menu item
+    function renderMenuItem(item) {
+        const imageHtml = item.image_url 
+            ? `<img src="${item.image_url}" class="img-fluid h-100 w-100" alt="${item.name}" style="object-fit: cover; min-height: 150px;">`
+            : `<div class="d-flex align-items-center justify-content-center h-100 bg-light text-muted" style="min-height: 150px;"><i class="bi bi-image fs-2"></i></div>`;
+        
+        let badges = '';
+        if (item.contains_caffeine) {
+            badges += '<span class="badge bg-warning text-dark"><i class="bi bi-lightning-charge-fill me-1"></i>Caffeine</span>';
+        }
+        if (item.temperature !== 'Hot & Cold') {
+            badges += `<span class="badge bg-info">${item.temperature}</span>`;
+        }
+        if (item.size !== 'One Size') {
+            badges += `<span class="badge bg-secondary">${item.size}</span>`;
+        }
+        if (item.preparation_time) {
+            badges += `<span class="badge bg-light text-dark"><i class="bi bi-clock me-1"></i>${item.preparation_time} min</span>`;
+        }
+        
+        const dietaryNotes = item.dietary_notes 
+            ? `<small class="text-success d-block mb-2"><i class="bi bi-check-circle me-1"></i>${item.dietary_notes}</small>`
+            : '';
+        
+        const calories = item.calories 
+            ? `<small class="text-muted d-block"><i class="bi bi-speedometer2 me-1"></i>${item.calories} calories</small>`
+            : '';
+        
+        return `
+            <div class="col-lg-6">
+                <div class="menu-item-card card h-100 shadow-sm">
+                    <div class="row g-0 h-100">
+                        <div class="col-md-4">
+                            ${imageHtml}
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body d-flex flex-column h-100">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="card-title mb-0">${item.name}</h5>
+                                    <span class="badge bg-primary fs-6 ms-2">${item.display_price}</span>
+                                </div>
+                                <p class="card-text text-muted flex-grow-1">${item.description}</p>
+                                <div class="item-details mt-auto">
+                                    <div class="d-flex flex-wrap gap-2 mb-2">
+                                        ${badges}
+                                    </div>
+                                    ${dietaryNotes}
+                                    ${calories}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Update results count
+    function updateResultsCount(count) {
+        resultsCount.textContent = count;
+        const pluralText = count === 1 ? '' : 's';
+        resultsCount.nextSibling.textContent = ` item${pluralText} found`;
+    }
+    
+    // Update active filters display
+    function updateActiveFilters() {
+        let hasActiveFilters = false;
+        let html = '';
+        
+        if (filterState.search) {
+            html += `<span class="badge bg-primary">Search: "${filterState.search}" <i class="bi bi-x ms-1 filter-remove" data-filter="search"></i></span>`;
+            hasActiveFilters = true;
+        }
+        
+        if (filterState.temperature !== 'all') {
+            html += `<span class="badge bg-info">${filterState.temperature} <i class="bi bi-x ms-1 filter-remove" data-filter="temperature"></i></span>`;
+            hasActiveFilters = true;
+        }
+        
+        if (filterState.caffeine !== 'all') {
+            const label = filterState.caffeine === 'with' ? 'With Caffeine' : 'Caffeine Free';
+            html += `<span class="badge bg-warning text-dark">${label} <i class="bi bi-x ms-1 filter-remove" data-filter="caffeine"></i></span>`;
+            hasActiveFilters = true;
+        }
+        
+        if (filterState.dietary !== 'all') {
+            html += `<span class="badge bg-success">${filterState.dietary} <i class="bi bi-x ms-1 filter-remove" data-filter="dietary"></i></span>`;
+            hasActiveFilters = true;
+        }
+        
+        if (filterState.price_min > {{ min_price }} || filterState.price_max < {{ max_price }}) {
+            html += `<span class="badge bg-secondary">${filterState.price_min}-${filterState.price_max} <i class="bi bi-x ms-1 filter-remove" data-filter="price"></i></span>`;
+            hasActiveFilters = true;
+        }
+        
+        activeFiltersList.innerHTML = html;
+        activeFiltersSection.style.display = hasActiveFilters ? 'block' : 'none';
+    }
+    
+    // Update URL without page reload
+    function updateURL() {
+        const params = new URLSearchParams();
+        Object.keys(filterState).forEach(key => {
+            if (filterState[key] !== 'all' && filterState[key] !== '' && 
+                !(key === 'price_min' && filterState[key] == {{ min_price }}) &&
+                !(key === 'price_max' && filterState[key] == {{ max_price }})) {
+                params.append(key, filterState[key]);
+            }
+        });
+        
+        const newURL = params.toString() ? `?${params.toString()}` : location.pathname;
+        window.history.replaceState({}, '', newURL);
+    }
+    
+    // Event listeners
+    searchInput.addEventListener('input', debounce(function() {
+        filterState.search = this.value;
+        applyFilters();
+    }, 300));
+    
+    document.getElementById('clear-search').addEventListener('click', function() {
+        searchInput.value = '';
+        filterState.search = '';
+        applyFilters();
+    });
+    
+    priceMinSlider.addEventListener('input', debounce(updatePriceDisplay, 300));
+    priceMaxSlider.addEventListener('input', debounce(updatePriceDisplay, 300));
+    
+    // Filter select dropdowns
+    document.querySelectorAll('.filter-select').forEach(select => {
+        select.addEventListener('change', function() {
+            filterState[this.dataset.filter] = this.value;
+            applyFilters();
+        });
+    });
+    
+    // Category filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            filterState.category = this.dataset.value;
+            
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.remove('btn-primary');
+                b.classList.add('btn-outline-primary');
+            });
+            this.classList.remove('btn-outline-primary');
+            this.classList.add('btn-primary');
+            
+            applyFilters();
+        });
+    });
+    
+    // Clear all filters
+    document.getElementById('clear-all-filters').addEventListener('click', function() {
+        filterState = {
+            category: 'all',
+            search: '',
+            temperature: 'all',
+            caffeine: 'all',
+            dietary: 'all',
+            price_min: {{ min_price }},
+            price_max: {{ max_price }},
+            sort: 'category'
+        };
+        
+        // Reset form elements
+        searchInput.value = '';
+        priceMinSlider.value = {{ min_price }};
+        priceMaxSlider.value = {{ max_price }};
+        updatePriceDisplay();
+        
+        document.querySelectorAll('.filter-select').forEach(select => {
+            select.value = 'all';
+        });
+        document.querySelector('[data-filter="sort"]').value = 'category';
+        
+        // Reset category buttons
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('btn-primary');
+            b.classList.add('btn-outline-primary');
+        });
+        document.querySelector('[data-value="all"]').classList.remove('btn-outline-primary');
+        document.querySelector('[data-value="all"]').classList.add('btn-primary');
+        
+        applyFilters();
+    });
+    
+    // Remove individual filters
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('filter-remove')) {
+            const filterType = e.target.dataset.filter;
+            
+            if (filterType === 'search') {
+                searchInput.value = '';
+                filterState.search = '';
+            } else if (filterType === 'price') {
+                filterState.price_min = {{ min_price }};
+                filterState.price_max = {{ max_price }};
+                priceMinSlider.value = {{ min_price }};
+                priceMaxSlider.value = {{ max_price }};
+                updatePriceDisplay();
+                return; // updatePriceDisplay calls applyFilters
+            } else {
+                filterState[filterType] = 'all';
+                const select = document.querySelector(`[data-filter="${filterType}"]`);
+                if (select) select.value = 'all';
+            }
+            
+            applyFilters();
+        }
+    });
+    
+    // Handle reset filters button in no results
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'reset-filters') {
+            document.getElementById('clear-all-filters').click();
+        }
+    });
+    
+    // Initialize price display
+    updatePriceDisplay();
+});
+</script>
+{% endblock %}

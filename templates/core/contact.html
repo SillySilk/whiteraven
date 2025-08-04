@@ -1,0 +1,416 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - {{ business_info.name|default:"White Raven Pourhouse" }}{% endblock %}
+
+{% block meta_description %}Get in touch with White Raven Pourhouse. Send us a message, call us, or visit us in Felton, CA. We'd love to hear from you!{% endblock %}
+
+{% block content %}
+<!-- Contact Header -->
+<section class="contact-header bg-gradient py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold text-white mb-3">Contact Us</h1>
+                <p class="lead text-white-50 mb-4">
+                    We'd love to hear from you! Whether you have a question, feedback, or just want to say hello, 
+                    don't hesitate to reach out.
+                </p>
+                
+                {% if business_info %}
+                <div class="contact-quick-info text-white">
+                    <div class="row g-3">
+                        {% if business_info.phone %}
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-telephone-fill fs-4 me-3"></i>
+                                <div>
+                                    <small class="text-white-50 d-block">Call Us</small>
+                                    <a href="tel:{{ business_info.phone }}" class="text-white text-decoration-none fw-bold">
+                                        {{ business_info.phone }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if business_info.email %}
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-envelope-fill fs-4 me-3"></i>
+                                <div>
+                                    <small class="text-white-50 d-block">Email Us</small>
+                                    <a href="mailto:{{ business_info.email }}" class="text-white text-decoration-none fw-bold">
+                                        {{ business_info.email }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="col-lg-6 text-center">
+                <div class="contact-illustration">
+                    <i class="bi bi-chat-heart display-1 text-white"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Form & Info -->
+<section class="contact-content py-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Contact Form -->
+            <div class="col-lg-8">
+                <div class="contact-form-wrapper">
+                    <h2 class="mb-4">Send Us a Message</h2>
+                    <p class="text-muted mb-4">
+                        Fill out the form below and we'll get back to you as soon as possible. 
+                        We typically respond within 24 hours.
+                    </p>
+                    
+                    <form method="post" class="contact-form" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Honeypot field for spam prevention (hidden) -->
+                        {{ form.honeypot }}
+                        
+                        <div class="row g-3">
+                            <!-- Name Field -->
+                            <div class="col-md-6">
+                                <label for="{{ form.name.id_for_label }}" class="form-label">
+                                    {{ form.name.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.name.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Email Field -->
+                            <div class="col-md-6">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">
+                                    {{ form.email.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.email.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Subject Field -->
+                            <div class="col-12">
+                                <label for="{{ form.subject.id_for_label }}" class="form-label">
+                                    {{ form.subject.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.subject }}
+                                {% if form.subject.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.subject.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Custom Subject Field (hidden by default) -->
+                            <div class="col-12" id="custom-subject-field">
+                                <label for="{{ form.custom_subject.id_for_label }}" class="form-label">
+                                    {{ form.custom_subject.label }}
+                                </label>
+                                {{ form.custom_subject }}
+                                {% if form.custom_subject.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.custom_subject.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Message Field -->
+                            <div class="col-12">
+                                <label for="{{ form.message.id_for_label }}" class="form-label">
+                                    {{ form.message.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.message }}
+                                {% if form.message.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.message.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">
+                                    Please provide as much detail as possible so we can assist you better.
+                                </div>
+                            </div>
+                            
+                            <!-- Non-field errors -->
+                            {% if form.non_field_errors %}
+                                <div class="col-12">
+                                    <div class="alert alert-danger">
+                                        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Submit Button -->
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-send me-2"></i>Send Message
+                                </button>
+                                <small class="text-muted d-block mt-2">
+                                    <i class="bi bi-shield-check me-1"></i>
+                                    Your information is secure and will only be used to respond to your inquiry.
+                                </small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="col-lg-4">
+                <div class="contact-info-card bg-light rounded-3 p-4 h-100">
+                    <h3 class="mb-4">Other Ways to Reach Us</h3>
+                    
+                    {% if business_info %}
+                    <!-- Phone -->
+                    {% if business_info.phone %}
+                    <div class="contact-method mb-4">
+                        <div class="d-flex align-items-start">
+                            <div class="contact-icon bg-primary text-white rounded-circle p-2 me-3">
+                                <i class="bi bi-telephone-fill"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Phone</h5>
+                                <p class="text-muted mb-1">Call us during business hours</p>
+                                <a href="tel:{{ business_info.phone }}" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-telephone me-1"></i>{{ business_info.phone }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Email -->
+                    {% if business_info.email %}
+                    <div class="contact-method mb-4">
+                        <div class="d-flex align-items-start">
+                            <div class="contact-icon bg-success text-white rounded-circle p-2 me-3">
+                                <i class="bi bi-envelope-fill"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Email</h5>
+                                <p class="text-muted mb-1">We respond within 24 hours</p>
+                                <a href="mailto:{{ business_info.email }}" class="btn btn-outline-success btn-sm">
+                                    <i class="bi bi-envelope me-1"></i>{{ business_info.email }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Visit Us -->
+                    {% if business_info.address %}
+                    <div class="contact-method mb-4">
+                        <div class="d-flex align-items-start">
+                            <div class="contact-icon bg-warning text-dark rounded-circle p-2 me-3">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Visit Us</h5>
+                                <p class="text-muted mb-1">{{ business_info.address|linebreaks }}</p>
+                                <a href="{% url 'core:location' %}" class="btn btn-outline-warning btn-sm">
+                                    <i class="bi bi-map me-1"></i>Get Directions
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Social Media -->
+                    {% if business_info.instagram_url %}
+                    <div class="contact-method mb-4">
+                        <div class="d-flex align-items-start">
+                            <div class="contact-icon bg-info text-white rounded-circle p-2 me-3">
+                                <i class="bi bi-instagram"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Follow Us</h5>
+                                <p class="text-muted mb-1">See our latest updates</p>
+                                <a href="{{ business_info.instagram_url }}" 
+                                   target="_blank" 
+                                   class="btn btn-outline-info btn-sm">
+                                    <i class="bi bi-instagram me-1"></i>Follow on Instagram
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                    
+                    <!-- Response Time -->
+                    <div class="response-time bg-white rounded p-3 border">
+                        <h6 class="mb-2">
+                            <i class="bi bi-clock-fill text-primary me-2"></i>
+                            Response Time
+                        </h6>
+                        <p class="small text-muted mb-0">
+                            We typically respond to messages within 24 hours during business days. 
+                            For urgent matters, please call us directly.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold">Frequently Asked Questions</h2>
+            <p class="lead text-muted">Quick answers to common questions</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                What are your hours of operation?
+                            </button>
+                        </h3>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Please check our <a href="{% url 'core:location' %}" class="text-decoration-none">Location & Hours</a> 
+                                page for current operating hours. Hours may vary on holidays.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                Do you have Wi-Fi available?
+                            </button>
+                        </h3>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes! We offer complimentary Wi-Fi for all customers. The network name and password 
+                                are available at the counter.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                Do you accommodate dietary restrictions?
+                            </button>
+                        </h3>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Absolutely! We offer various options including plant-based milk alternatives, 
+                                gluten-free options, and can accommodate most dietary needs. Please let us know 
+                                about any allergies or restrictions when ordering.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.bg-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.contact-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.contact-form .form-control,
+.contact-form .form-select {
+    border-radius: 0.5rem;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.contact-form .form-control:focus,
+.contact-form .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.contact-method {
+    transition: transform 0.2s ease;
+}
+
+.contact-method:hover {
+    transform: translateX(5px);
+}
+
+.accordion-button {
+    font-weight: 500;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #667eea;
+    color: white;
+}
+
+#custom-subject-field {
+    display: none;
+}
+
+.text-white-50 {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle custom subject field visibility
+    const subjectSelect = document.getElementById('{{ form.subject.id_for_label }}');
+    const customSubjectField = document.getElementById('custom-subject-field');
+    const customSubjectInput = document.getElementById('{{ form.custom_subject.id_for_label }}');
+    
+    function toggleCustomSubject() {
+        if (subjectSelect.value === 'other') {
+            customSubjectField.style.display = 'block';
+            customSubjectInput.required = true;
+        } else {
+            customSubjectField.style.display = 'none';
+            customSubjectInput.required = false;
+            customSubjectInput.value = '';
+        }
+    }
+    
+    // Initial check
+    toggleCustomSubject();
+    
+    // Listen for changes
+    subjectSelect.addEventListener('change', toggleCustomSubject);
+});
+</script>
+{% endblock %}

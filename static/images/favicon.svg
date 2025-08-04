@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <!-- Coffee cup background -->
+  <rect width="32" height="32" fill="#F5F5DC" rx="4"/>
+  <!-- Coffee cup -->
+  <path d="M8 12h14v10c0 2.5-1.5 4-4 4h-6c-2.5 0-4-1.5-4-4V12z" fill="#6F4E37"/>
+  <!-- Handle -->
+  <path d="M22 14h2c1 0 2 1 2 2v2c0 1-1 2-2 2h-2" stroke="#6F4E37" stroke-width="1.5" fill="none"/>
+  <!-- Rim -->
+  <ellipse cx="15" cy="12" rx="7" ry="1" fill="#8B4513"/>
+  <!-- Steam -->
+  <path d="M12 8c0-1 0-2 1-2s1 1 1 2-1 1-1 2-1-1-1-2z" fill="#D3D3D3"/>
+  <path d="M16 8c0-1 0-2 1-2s1 1 1 2-1 1-1 2-1-1-1-2z" fill="#D3D3D3"/>
+</svg>

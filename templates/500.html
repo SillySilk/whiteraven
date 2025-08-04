@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Server Error - White Raven Pourhouse</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --coffee-brown: #6F4E37;
+            --cream: #F5F5DC;
+        }
+        .text-coffee { color: var(--coffee-brown) !important; }
+        .btn-coffee {
+            background-color: var(--coffee-brown);
+            border-color: var(--coffee-brown);
+            color: white;
+        }
+        .btn-coffee:hover {
+            background-color: #5a3d2b;
+            border-color: #5a3d2b;
+            color: white;
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column h-100 bg-light">
+    <!-- Simple header -->
+    <header class="bg-dark text-white py-3">
+        <div class="container">
+            <h1 class="h3 mb-0">
+                <i class="bi bi-cup-hot-fill me-2"></i>
+                White Raven Pourhouse
+            </h1>
+        </div>
+    </header>
+
+    <!-- Error content -->
+    <main class="flex-shrink-0 d-flex align-items-center">
+        <div class="container text-center">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="error-content">
+                        <h1 class="display-1 text-coffee mb-4">500</h1>
+                        <h2 class="mb-4">Internal Server Error</h2>
+                        <p class="lead text-muted mb-4">
+                            We're experiencing some technical difficulties. 
+                            Our team has been notified and is working to fix the issue.
+                        </p>
+                        <p class="mb-4">
+                            Please try again in a few minutes, or contact us if the problem persists.
+                        </p>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a href="/" class="btn btn-coffee btn-lg me-md-2">
+                                <i class="bi bi-house-fill me-2"></i>Go Home
+                            </a>
+                            <a href="mailto:info@whiteravenpourhouse.com" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-envelope-fill me-2"></i>Contact Us
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Simple footer -->
+    <footer class="footer mt-auto py-3 bg-dark text-white">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 White Raven Pourhouse. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

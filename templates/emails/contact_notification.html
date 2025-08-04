@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Contact Form Submission</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #8B4513;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        .field {
+            margin-bottom: 15px;
+        }
+        .field-label {
+            font-weight: bold;
+            color: #8B4513;
+            margin-bottom: 5px;
+        }
+        .field-value {
+            background-color: white;
+            padding: 10px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+        }
+        .message-content {
+            white-space: pre-wrap;
+            min-height: 80px;
+        }
+        .footer {
+            background-color: #8B4513;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 0 0 5px 5px;
+            font-size: 14px;
+        }
+        .timestamp {
+            color: #666;
+            font-size: 14px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>White Raven Pourhouse</h1>
+        <h2>New Contact Form Submission</h2>
+    </div>
+    
+    <div class="content">
+        <div class="field">
+            <div class="field-label">From:</div>
+            <div class="field-value">{{ contact.name }}</div>
+        </div>
+        
+        <div class="field">
+            <div class="field-label">Email:</div>
+            <div class="field-value">
+                <a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+            </div>
+        </div>
+        
+        <div class="field">
+            <div class="field-label">Subject:</div>
+            <div class="field-value">{{ contact.display_subject }}</div>
+        </div>
+        
+        <div class="field">
+            <div class="field-label">Message:</div>
+            <div class="field-value message-content">{{ contact.message }}</div>
+        </div>
+        
+        <div class="field">
+            <div class="field-label">Submitted:</div>
+            <div class="field-value timestamp">
+                {{ contact.created_at|date:"F d, Y \a\t g:i A" }}
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>This message was sent from the White Raven Pourhouse website contact form.</p>
+        <p>Please respond directly to the customer's email address above.</p>
+    </div>
+</body>
+</html>

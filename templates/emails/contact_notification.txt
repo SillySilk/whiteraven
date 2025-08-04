@@ -1,0 +1,19 @@
+WHITE RAVEN POURHOUSE - NEW CONTACT FORM SUBMISSION
+========================================================
+
+From: {{ contact.name }}
+Email: {{ contact.email }}
+Subject: {{ contact.display_subject }}
+
+Message:
+--------
+{{ contact.message }}
+
+Submitted: {{ contact.created_at|date:"F d, Y \a\t g:i A" }}
+
+========================================================
+This message was sent from the White Raven Pourhouse website contact form.
+Please respond directly to the customer's email address above.
+
+White Raven Pourhouse
+"The Best Little Pour House in Felton"

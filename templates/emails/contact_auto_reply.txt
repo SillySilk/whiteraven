@@ -1,0 +1,31 @@
+WHITE RAVEN POURHOUSE
+"The Best Little Pour House in Felton"
+
+Thank you for contacting us, {{ contact.name }}!
+
+We've received your message regarding "{{ contact.display_subject }}" and will get back to you as soon as possible.
+
+Our team typically responds to inquiries within 24 hours during business days. If you have an urgent question, please feel free to call us directly.
+
+{% if business_info %}
+CONTACT INFORMATION
+-------------------
+Phone: {{ business_info.phone }}
+Email: {{ business_info.email }}
+Address: {{ business_info.address }}
+
+{% if business_info.hours %}
+CURRENT HOURS
+-------------
+{% for day, hours in formatted_hours.items %}{{ day }}: {{ hours }}
+{% endfor %}
+{% endif %}
+{% endif %}
+
+{% if business_info.instagram_url %}In the meantime, we invite you to follow us on Instagram for the latest updates, specials, and behind-the-scenes content! Visit: {{ business_info.instagram_url }}{% endif %}
+
+Thank you for choosing White Raven Pourhouse. We look forward to serving you soon!
+
+---
+This is an automated confirmation email.
+Please do not reply to this email address.

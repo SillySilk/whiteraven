@@ -1,0 +1,234 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls static admin_modify %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+.hours-helper {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.hours-helper h3 {
+    margin-top: 0;
+    color: #8B4513;
+    font-size: 16px;
+}
+
+.hours-example {
+    background-color: #f5f5f5;
+    border-left: 4px solid #007cba;
+    padding: 10px;
+    margin: 10px 0;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+.day-builder {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+    padding: 5px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.day-builder label {
+    width: 80px;
+    font-weight: bold;
+}
+
+.day-builder input[type="time"] {
+    margin: 0 5px;
+    padding: 2px;
+}
+
+.day-builder input[type="checkbox"] {
+    margin: 0 5px;
+}
+
+.copy-button {
+    background-color: #007cba;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 11px;
+    margin-left: 10px;
+}
+
+.copy-button:hover {
+    background-color: #005a87;
+}
+
+.current-status {
+    background-color: #e8f5e8;
+    border: 1px solid #c3e6c3;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.status-open {
+    background-color: #e8f5e8;
+    border-color: #c3e6c3;
+    color: #2d5016;
+}
+
+.status-closed {
+    background-color: #ffe8e8;
+    border-color: #ffc6c6;
+    color: #8b1538;
+}
+</style>
+{% endblock %}
+
+{% block submit_buttons_bottom %}
+{{ block.super }}
+
+<div class="submit-row">
+    <!-- Business Hours Management Helper -->
+    <div class="hours-helper">
+        <h3>Business Hours Management</h3>
+        
+        <!-- Current Status Display -->
+        {% if original %}
+        <div class="current-status" id="currentStatus">
+            <strong>Current Status:</strong> <span id="statusText">Loading...</span>
+        </div>
+        {% endif %}
+        
+        <!-- Hours Format Helper -->
+        <div>
+            <h4>Regular Hours Format</h4>
+            <p style="margin-bottom: 10px; color: #666; font-size: 13px;">
+                Use this JSON format for regular weekly hours:
+            </p>
+            <div class="hours-example">
+{
+  "monday": {"open": "07:00", "close": "19:00", "closed": false},
+  "tuesday": {"open": "07:00", "close": "19:00", "closed": false},
+  "wednesday": {"open": "07:00", "close": "19:00", "closed": false},
+  "thursday": {"open": "07:00", "close": "19:00", "closed": false},
+  "friday": {"open": "07:00", "close": "19:00", "closed": false},
+  "saturday": {"open": "08:00", "close": "18:00", "closed": false},
+  "sunday": {"closed": true}
+}
+            </div>
+            <button type="button" class="copy-button" onclick="copyHoursExample()">Copy Example</button>
+        </div>
+        
+        <!-- Special Hours Helper -->
+        <div style="margin-top: 20px;">
+            <h4>Special Hours Format</h4>
+            <p style="margin-bottom: 10px; color: #666; font-size: 13px;">
+                Use this JSON format for holidays and special events:
+            </p>
+            <div class="hours-example">
+{
+  "2024-12-25": {"closed": true, "note": "Christmas Day"},
+  "2024-07-04": {"open": "08:00", "close": "16:00", "note": "Independence Day - Limited Hours"},
+  "2024-01-01": {"closed": true, "note": "New Year's Day"}
+}
+            </div>
+            <button type="button" class="copy-button" onclick="copySpecialExample()">Copy Example</button>
+        </div>
+        
+        <!-- Time Format Notes -->
+        <div style="margin-top: 15px; padding: 10px; background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 3px;">
+            <strong>Important Notes:</strong>
+            <ul style="margin: 5px 0; padding-left: 20px; font-size: 12px;">
+                <li>Use 24-hour format for times (e.g., "07:00" for 7:00 AM, "19:00" for 7:00 PM)</li>
+                <li>All times are in Pacific timezone (America/Los_Angeles)</li>
+                <li>Set "closed": true for days when the business is closed</li>
+                <li>Special hours override regular hours for specific dates</li>
+                <li>Use YYYY-MM-DD format for special hour dates</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Email Configuration Section -->
+    <div class="hours-helper">
+        <h3>Email Configuration</h3>
+        <p style="margin-bottom: 10px; color: #666;">
+            Test your email settings to ensure contact form notifications are working properly.
+        </p>
+        <form method="post" action="{% url 'admin:core_businessinfo_test_email' %}" style="display: inline;">
+            {% csrf_token %}
+            <input 
+                type="submit" 
+                value="Test Email Configuration" 
+                class="default" 
+                style="background-color: #8B4513; border-color: #8B4513; padding: 8px 15px; font-size: 13px;"
+            />
+        </form>
+        <div style="margin-top: 10px; font-size: 12px; color: #666;">
+            <strong>Note:</strong> This will send a test email to the configured administrator(s).
+            <br>Make sure your email settings are properly configured in production.
+        </div>
+    </div>
+</div>
+
+<script>
+function copyHoursExample() {
+    const text = `{
+  "monday": {"open": "07:00", "close": "19:00", "closed": false},
+  "tuesday": {"open": "07:00", "close": "19:00", "closed": false},
+  "wednesday": {"open": "07:00", "close": "19:00", "closed": false},
+  "thursday": {"open": "07:00", "close": "19:00", "closed": false},
+  "friday": {"open": "07:00", "close": "19:00", "closed": false},
+  "saturday": {"open": "08:00", "close": "18:00", "closed": false},
+  "sunday": {"closed": true}
+}`;
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Example hours copied to clipboard!');
+    });
+}
+
+function copySpecialExample() {
+    const text = `{
+  "2024-12-25": {"closed": true, "note": "Christmas Day"},
+  "2024-07-04": {"open": "08:00", "close": "16:00", "note": "Independence Day - Limited Hours"},
+  "2024-01-01": {"closed": true, "note": "New Year's Day"}
+}`;
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Example special hours copied to clipboard!');
+    });
+}
+
+// Load current status if this is an existing object
+{% if original %}
+function loadCurrentStatus() {
+    fetch('{% url "core:current_status_api" %}')
+        .then(response => response.json())
+        .then(data => {
+            const statusDiv = document.getElementById('currentStatus');
+            const statusText = document.getElementById('statusText');
+            
+            statusText.textContent = data.status;
+            
+            if (data.is_open) {
+                statusDiv.className = 'current-status status-open';
+            } else {
+                statusDiv.className = 'current-status status-closed';
+            }
+            
+            if (data.is_special) {
+                statusText.textContent += ` (${data.reason})`;
+            }
+        })
+        .catch(error => {
+            document.getElementById('statusText').textContent = 'Status unavailable';
+        });
+}
+
+// Load status when page loads
+document.addEventListener('DOMContentLoaded', loadCurrentStatus);
+{% endif %}
+</script>
+{% endblock %}

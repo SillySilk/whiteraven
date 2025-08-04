@@ -1,0 +1,29 @@
+# White Raven Pourhouse - Production Requirements for PythonAnywhere
+# This file contains the exact dependencies for production deployment
+
+# Core Django framework
+Django==5.2.4
+
+# Database adapter for MySQL on PythonAnywhere
+mysqlclient==2.2.6
+
+# Image processing for menu item photos
+Pillow==11.1.0
+
+# Python timezone utilities
+pytz==2024.1
+
+# Environment variable management
+python-decouple==3.8
+
+# Security and performance packages for production
+whitenoise==6.8.2  # Static file serving optimization
+gunicorn==23.0.0   # WSGI HTTP Server (if needed for scaling)
+
+# Additional production utilities
+certifi==2024.11.26  # SSL certificate verification
+charset-normalizer==3.4.0  # Character encoding detection
+
+# Note: Development packages (django-extensions) are excluded from production
+# Install these requirements on PythonAnywhere with:
+# pip3.11 install --user -r requirements-production.txt

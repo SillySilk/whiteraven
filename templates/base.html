@@ -1,0 +1,260 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover">
+    <meta name="description" content="{% block meta_description %}{% if business_info %}{{ business_info.meta_description }}{% else %}White Raven Pourhouse - The Best Little Pour House in Felton. Serving exceptional coffee and creating memorable experiences in Felton, CA.{% endif %}{% endblock %}">
+    <meta name="author" content="White Raven Pourhouse">
+    
+    <!-- Mobile optimization meta tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="White Raven Pourhouse">
+    <meta name="theme-color" content="#6F4E37">
+    <meta name="msapplication-TileColor" content="#6F4E37">
+    
+    <!-- Preconnect to external domains for better performance -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    
+    <!-- Page Title -->
+    <title>{% block title %}White Raven Pourhouse - The Best Little Pour House in Felton{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="d-flex flex-column h-100">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <!-- Brand -->
+            <a class="navbar-brand fw-bold" href="{% url 'core:home' %}">
+                <i class="bi bi-cup-hot-fill me-2"></i>
+                {% if business_info %}{{ business_info.name }}{% else %}White Raven Pourhouse{% endif %}
+            </a>
+            
+            <!-- Mobile toggle button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Navigation items -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'core:home' %}">
+                            <i class="bi bi-house-fill me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'menu' %}active{% endif %}" href="{% url 'menu:menu_list' %}">
+                            <i class="bi bi-journal-text me-1"></i>Menu
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'location' %}active{% endif %}" href="{% url 'core:location' %}">
+                            <i class="bi bi-geo-alt-fill me-1"></i>Location
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'core:about' %}">
+                            <i class="bi bi-info-circle-fill me-1"></i>About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'core:contact' %}">
+                            <i class="bi bi-envelope-fill me-1"></i>Contact
+                        </a>
+                    </li>
+                    {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin:index' %}">
+                            <i class="bi bi-gear-fill me-1"></i>Admin
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {% if message.tags == 'error' %}
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    {% elif message.tags == 'success' %}
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                    {% elif message.tags == 'warning' %}
+                        <i class="bi bi-exclamation-circle-fill me-2"></i>
+                    {% else %}
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                    {% endif %}
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Page Content -->
+    <main class="flex-shrink-0">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-4 bg-dark text-light">
+        <div class="container">
+            <div class="row">
+                <!-- Business Info -->
+                <div class="col-md-4 mb-3">
+                    <h5 class="mb-3">
+                        <i class="bi bi-cup-hot-fill me-2"></i>
+                        {% if business_info %}{{ business_info.name }}{% else %}White Raven Pourhouse{% endif %}
+                    </h5>
+                    <p class="mb-2 text-muted">
+                        <em>{% if business_info %}{{ business_info.tagline }}{% else %}The Best Little Pour House in Felton{% endif %}</em>
+                    </p>
+                    {% if business_info %}
+                    <p class="mb-1">
+                        <i class="bi bi-geo-alt me-2"></i>
+                        {{ business_info.address|linebreaksbr }}
+                    </p>
+                    <p class="mb-1">
+                        <i class="bi bi-telephone me-2"></i>
+                        <a href="tel:{{ business_info.phone }}" class="text-light text-decoration-none">{{ business_info.phone }}</a>
+                    </p>
+                    <p class="mb-0">
+                        <i class="bi bi-envelope me-2"></i>
+                        <a href="mailto:{{ business_info.email }}" class="text-light text-decoration-none">{{ business_info.email }}</a>
+                    </p>
+                    {% else %}
+                    <p class="mb-1">
+                        <i class="bi bi-geo-alt me-2"></i>
+                        Felton, CA
+                    </p>
+                    <p class="mb-1">
+                        <i class="bi bi-telephone me-2"></i>
+                        <a href="tel:+1-555-0123" class="text-light text-decoration-none">(555) 012-3456</a>
+                    </p>
+                    <p class="mb-0">
+                        <i class="bi bi-envelope me-2"></i>
+                        <a href="mailto:info@whiteravenpourhouse.com" class="text-light text-decoration-none">info@whiteravenpourhouse.com</a>
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-md-4 mb-3">
+                    <h5 class="mb-3">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="{% url 'core:home' %}" class="text-light text-decoration-none">
+                                <i class="bi bi-chevron-right me-2"></i>Home
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'menu:menu_list' %}" class="text-light text-decoration-none">
+                                <i class="bi bi-chevron-right me-2"></i>Our Menu
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'core:location' %}" class="text-light text-decoration-none">
+                                <i class="bi bi-chevron-right me-2"></i>Location & Hours
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'core:about' %}" class="text-light text-decoration-none">
+                                <i class="bi bi-chevron-right me-2"></i>About Us
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'core:contact' %}" class="text-light text-decoration-none">
+                                <i class="bi bi-chevron-right me-2"></i>Contact Us
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Social Media & Hours -->
+                <div class="col-md-4 mb-3">
+                    <h5 class="mb-3">Connect With Us</h5>
+                    <div class="mb-3">
+                        {% if business_info and business_info.instagram_url %}
+                        <a href="{{ business_info.instagram_url }}" target="_blank" class="text-light text-decoration-none me-3">
+                            <i class="bi bi-instagram fs-4"></i>
+                        </a>
+                        {% endif %}
+                        {% if business_info and business_info.facebook_url %}
+                        <a href="{{ business_info.facebook_url }}" target="_blank" class="text-light text-decoration-none me-3">
+                            <i class="bi bi-facebook fs-4"></i>
+                        </a>
+                        {% endif %}
+                        {% if business_info %}
+                        <a href="mailto:{{ business_info.email }}" class="text-light text-decoration-none">
+                            <i class="bi bi-envelope fs-4"></i>
+                        </a>
+                        {% else %}
+                        <a href="mailto:info@whiteravenpourhouse.com" class="text-light text-decoration-none">
+                            <i class="bi bi-envelope fs-4"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <h6 class="mb-2">Hours</h6>
+                    <small class="text-muted">
+                        <div>Mon-Fri: 6:00 AM - 6:00 PM</div>
+                        <div>Sat-Sun: 7:00 AM - 5:00 PM</div>
+                    </small>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <hr class="my-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 text-muted small">
+                        &copy; {% now "Y" %} {% if business_info %}{{ business_info.copyright_text }}{% else %}White Raven Pourhouse{% endif %}. All rights reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0 text-muted small">
+                        {% if business_info %}{{ business_info.footer_tagline }}{% else %}Made with <i class="bi bi-heart-fill text-danger"></i> in Felton, CA{% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    <!-- Browser Compatibility Testing (Development Only) -->
+    {% if debug %}
+    <script src="{% static 'js/browser-test.js' %}"></script>
+    {% endif %}
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

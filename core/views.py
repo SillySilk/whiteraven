@@ -1,0 +1,247 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.conf import settings
+from django.utils import timezone
+from django.http import JsonResponse
+from datetime import datetime
+import json
+
+from .models import BusinessInfo, ContactSubmission
+from .forms import ContactForm
+from .email_utils import EmailService
+from menu.models import MenuItem
+
+
+def home(request):
+    """
+    Homepage view displaying business info, featured menu items, and welcome content
+    """
+    try:
+        business_info = BusinessInfo.objects.first()
+    except BusinessInfo.DoesNotExist:
+        business_info = None
+    
+    # Get featured menu items for homepage display
+    featured_items = MenuItem.objects.filter(
+        featured=True, 
+        available=True
+    ).select_related('category')[:6]  # Limit to 6 featured items
+    
+    # Get current business status using enhanced method
+    is_open = False
+    current_status = "Hours not available"
+    status_details = {}
+    
+    if business_info:
+        status_details = business_info.get_current_status()
+        is_open = status_details.get('is_open', False)
+        current_status = status_details.get('status', 'Hours not available')
+    
+    context = {
+        'business_info': business_info,
+        'featured_items': featured_items,
+        'is_open': is_open,
+        'current_status': current_status,
+        'status_details': status_details,
+        'page_title': 'Home',
+    }
+    
+    return render(request, 'core/home.html', context)
+
+
+def location(request):
+    """
+    Location page view displaying address, hours, and map information
+    """
+    try:
+        business_info = BusinessInfo.objects.first()
+    except BusinessInfo.DoesNotExist:
+        business_info = None
+    
+    # Format hours for display using enhanced method
+    formatted_hours = {}
+    current_status_info = {}
+    
+    if business_info:
+        formatted_hours = business_info.get_formatted_hours()
+        current_status_info = business_info.get_current_status()
+    
+    context = {
+        'business_info': business_info,
+        'formatted_hours': formatted_hours,
+        'current_status_info': current_status_info,
+        'page_title': 'Location & Hours',
+    }
+    
+    return render(request, 'core/location.html', context)
+
+
+def contact(request):
+    """
+    Enhanced contact page view with comprehensive form submission handling
+    """
+    try:
+        business_info = BusinessInfo.objects.first()
+    except BusinessInfo.DoesNotExist:
+        business_info = None
+    
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            try:
+                # Save the contact submission
+                contact_submission = form.save()
+                
+                # Log the successful submission
+                import logging
+                logger = logging.getLogger('core.views')
+                logger.info(f"Contact form submitted by {contact_submission.name} ({contact_submission.email})")
+                
+                # Send email notifications using the EmailService
+                email_results = {
+                    'notification_sent': False,
+                    'auto_reply_sent': False,
+                    'errors': []
+                }
+                
+                try:
+                    # Send notification to business owner
+                    email_results['notification_sent'] = EmailService.send_contact_notification(
+                        contact_submission, business_info
+                    )
+                    
+                    if email_results['notification_sent']:
+                        logger.info(f"Contact notification sent for submission {contact_submission.id}")
+                    else:
+                        logger.warning(f"Failed to send contact notification for submission {contact_submission.id}")
+                        email_results['errors'].append("Failed to send notification to business owner")
+                    
+                except Exception as e:
+                    logger.error(f"Error sending contact notification: {str(e)}")
+                    email_results['errors'].append(f"Notification error: {str(e)}")
+                
+                try:
+                    # Send auto-reply to customer
+                    email_results['auto_reply_sent'] = EmailService.send_contact_auto_reply(
+                        contact_submission, business_info
+                    )
+                    
+                    if email_results['auto_reply_sent']:
+                        logger.info(f"Auto-reply sent for submission {contact_submission.id}")
+                    else:
+                        logger.warning(f"Failed to send auto-reply for submission {contact_submission.id}")
+                        email_results['errors'].append("Failed to send confirmation email to customer")
+                    
+                except Exception as e:
+                    logger.error(f"Error sending auto-reply: {str(e)}")
+                    email_results['errors'].append(f"Auto-reply error: {str(e)}")
+                
+                # Determine success message based on email results
+                if email_results['notification_sent'] and email_results['auto_reply_sent']:
+                    success_message = (
+                        f"Thank you for your message, {contact_submission.name}! "
+                        "We've received your inquiry and sent you a confirmation email. "
+                        "We'll get back to you as soon as possible."
+                    )
+                elif email_results['notification_sent']:
+                    success_message = (
+                        f"Thank you for your message, {contact_submission.name}! "
+                        "We've received your inquiry and will get back to you as soon as possible."
+                    )
+                else:
+                    success_message = (
+                        f"Thank you for your message, {contact_submission.name}! "
+                        "We've received your inquiry. If you don't hear back within 24 hours, "
+                        "please call us directly."
+                    )
+                
+                # Show success message and redirect
+                messages.success(request, success_message)
+                
+                # Log any email errors for admin review
+                if email_results['errors']:
+                    logger.error(f"Email errors for submission {contact_submission.id}: {'; '.join(email_results['errors'])}")
+                    
+                    # Send admin notification about email failures (if possible)
+                    try:
+                        EmailService.send_admin_notification(
+                            subject="Contact Form Email Delivery Issues",
+                            message=f"Contact submission {contact_submission.id} from {contact_submission.name} "
+                                   f"had email delivery issues: {'; '.join(email_results['errors'])}",
+                            level='warning'
+                        )
+                    except:
+                        pass  # Don't fail if admin notification also fails
+                
+                return redirect('core:contact')
+                
+            except Exception as e:
+                # Handle database or other submission errors
+                logger.error(f"Error saving contact submission: {str(e)}")
+                messages.error(
+                    request, 
+                    "We're sorry, but there was an error processing your message. "
+                    "Please try again or contact us directly."
+                )
+        else:
+            # Form has validation errors
+            messages.error(
+                request,
+                "Please correct the errors below and try again."
+            )
+    else:
+        form = ContactForm()
+    
+    context = {
+        'business_info': business_info,
+        'form': form,
+        'page_title': 'Contact Us',
+    }
+    
+    return render(request, 'core/contact.html', context)
+
+
+def about(request):
+    """
+    About page view displaying business story and information
+    """
+    try:
+        business_info = BusinessInfo.objects.first()
+    except BusinessInfo.DoesNotExist:
+        business_info = None
+    
+    context = {
+        'business_info': business_info,
+        'page_title': 'About Us',
+    }
+    
+    return render(request, 'core/about.html', context)
+
+
+def current_status_api(request):
+    """
+    API endpoint to get current business status as JSON.
+    Used by admin interface and potentially for AJAX updates.
+    """
+    try:
+        business_info = BusinessInfo.objects.first()
+        if business_info:
+            status_info = business_info.get_current_status()
+            return JsonResponse(status_info)
+        else:
+            return JsonResponse({
+                'is_open': False,
+                'status': 'Business information not configured',
+                'reason': 'No business info found',
+                'next_change': None,
+                'is_special': False
+            })
+    except Exception as e:
+        return JsonResponse({
+            'is_open': False,
+            'status': 'Status unavailable',
+            'reason': 'Error retrieving status',
+            'next_change': None,
+            'is_special': False,
+            'error': str(e)
+        })

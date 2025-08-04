@@ -1,0 +1,420 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Location & Hours - {{ business_info.name|default:"White Raven Pourhouse" }}{% endblock %}
+
+{% block meta_description %}Find White Raven Pourhouse in Felton, CA. View our hours, get directions, and plan your visit to the best little pour house in Felton.{% endblock %}
+
+{% block content %}
+<!-- Location Header -->
+<section class="location-header bg-gradient py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold text-white mb-3">Visit Us</h1>
+                <p class="lead text-white-50 mb-4">
+                    Located in the heart of Felton, we're easy to find and always excited to welcome new friends. 
+                    Come discover why we're the best little pour house in town!
+                </p>
+                
+                {% if business_info %}
+                <div class="quick-contact text-white">
+                    {% if business_info.phone %}
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-telephone-fill me-3"></i>
+                        <a href="tel:{{ business_info.phone }}" class="text-white text-decoration-none">
+                            {{ business_info.phone }}
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    {% if business_info.email %}
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-envelope-fill me-3"></i>
+                        <a href="mailto:{{ business_info.email }}" class="text-white text-decoration-none">
+                            {{ business_info.email }}
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="col-lg-6 text-center">
+                <div class="location-illustration">
+                    <i class="bi bi-geo-alt-fill display-1 text-white"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Location Details -->
+<section class="location-details py-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Address & Map -->
+            <div class="col-lg-8">
+                <div class="address-section mb-5">
+                    <h2 class="mb-4">
+                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                        Our Location
+                    </h2>
+                    
+                    {% if business_info and business_info.address %}
+                    <div class="address-card bg-light rounded-3 p-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h4 class="mb-2">{{ business_info.name }}</h4>
+                                <address class="mb-3">
+                                    {{ business_info.address|linebreaks }}
+                                </address>
+                                
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <a href="https://maps.google.com/?q={{ business_info.address|urlencode }}" 
+                                       target="_blank" 
+                                       class="btn btn-primary">
+                                        <i class="bi bi-map me-2"></i>Get Directions
+                                    </a>
+                                    
+                                    <a href="https://maps.apple.com/?q={{ business_info.address|urlencode }}" 
+                                       target="_blank" 
+                                       class="btn btn-outline-primary">
+                                        <i class="bi bi-phone me-2"></i>Apple Maps
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 text-center">
+                                <div class="location-icon bg-primary text-white rounded-circle p-4 mx-auto" style="width: 80px; height: 80px;">
+                                    <i class="bi bi-shop fs-2"></i>
+                                </div>
+                                <p class="mt-2 mb-0 small text-muted">Coffee Shop</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Address information will be updated soon. Please contact us for directions!
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Map Placeholder -->
+                <div class="map-section">
+                    <h3 class="mb-3">Find Us on the Map</h3>
+                    <div class="map-placeholder bg-light rounded-3 p-5 text-center">
+                        <i class="bi bi-map display-4 text-muted mb-3"></i>
+                        <h5>Interactive Map Coming Soon!</h5>
+                        <p class="text-muted mb-3">
+                            We're working on integrating an interactive map to make it even easier to find us.
+                        </p>
+                        {% if business_info and business_info.address %}
+                        <a href="https://maps.google.com/?q={{ business_info.address|urlencode }}" 
+                           target="_blank" 
+                           class="btn btn-primary">
+                            <i class="bi bi-box-arrow-up-right me-2"></i>View in Google Maps
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hours & Info -->
+            <div class="col-lg-4">
+                <div class="hours-card bg-light rounded-3 p-4 h-100">
+                    <h3 class="mb-4">
+                        <i class="bi bi-clock-fill text-primary me-2"></i>
+                        Hours of Operation
+                    </h3>
+                    
+                    <!-- Current Status Badge -->
+                    {% if current_status_info %}
+                    <div class="current-status-badge mb-4 p-3 rounded-3 {% if current_status_info.is_open %}bg-success text-white{% else %}bg-secondary text-white{% endif %}">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-{% if current_status_info.is_open %}check-circle-fill{% else %}x-circle-fill{% endif %} me-2 fs-5"></i>
+                            <div>
+                                <strong>{{ current_status_info.status }}</strong>
+                                {% if current_status_info.is_special %}
+                                <br><small class="opacity-75">{{ current_status_info.reason }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if formatted_hours %}
+                    <div class="hours-list">
+                        {% for day, hours in formatted_hours.items %}
+                        <div class="hour-item d-flex justify-content-between align-items-center py-2 border-bottom">
+                            <span class="fw-medium">{{ day }}</span>
+                            <span class="{% if hours == 'Closed' %}text-muted{% else %}text-success{% endif %}">
+                                {{ hours }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="default-hours">
+                        <div class="hour-item d-flex justify-content-between align-items-center py-2 border-bottom">
+                            <span class="fw-medium">Monday - Friday</span>
+                            <span class="text-success">6:00 AM - 6:00 PM</span>
+                        </div>
+                        <div class="hour-item d-flex justify-content-between align-items-center py-2 border-bottom">
+                            <span class="fw-medium">Saturday - Sunday</span>
+                            <span class="text-success">7:00 AM - 5:00 PM</span>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info mt-3 mb-0">
+                        <small>
+                            <i class="bi bi-info-circle me-1"></i>
+                            Hours may vary on holidays. Please call ahead to confirm.
+                        </small>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Special Notes -->
+                    <div class="special-notes mt-4">
+                        <h5 class="mb-3">Good to Know</h5>
+                        
+                        <div class="note-item mb-3">
+                            <div class="d-flex">
+                                <i class="bi bi-wifi text-primary me-3 mt-1"></i>
+                                <div>
+                                    <strong>Free Wi-Fi</strong>
+                                    <p class="mb-0 small text-muted">Complimentary internet for all customers</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="note-item mb-3">
+                            <div class="d-flex">
+                                <i class="bi bi-p-square text-primary me-3 mt-1"></i>
+                                <div>
+                                    <strong>Parking Available</strong>
+                                    <p class="mb-0 small text-muted">Convenient parking near our location</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="note-item mb-3">
+                            <div class="d-flex">
+                                <i class="bi bi-heart text-primary me-3 mt-1"></i>
+                                <div>
+                                    <strong>Pet Friendly</strong>
+                                    <p class="mb-0 small text-muted">Well-behaved pets welcome on our patio</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="note-item">
+                            <div class="d-flex">
+                                <i class="bi bi-people text-primary me-3 mt-1"></i>
+                                <div>
+                                    <strong>Study & Work Friendly</strong>
+                                    <p class="mb-0 small text-muted">Quiet spaces perfect for work or study</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Getting Here -->
+<section class="getting-here py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold">Getting Here</h2>
+            <p class="lead text-muted">Multiple ways to reach us easily</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- By Car -->
+            <div class="col-md-6 col-lg-3">
+                <div class="transport-card text-center p-4 bg-white rounded-3 shadow-sm h-100">
+                    <div class="transport-icon bg-primary text-white rounded-circle p-3 mx-auto mb-3" style="width: 60px; height: 60px;">
+                        <i class="bi bi-car-front fs-4"></i>
+                    </div>
+                    <h5>By Car</h5>
+                    <p class="text-muted small">
+                        Easy access with nearby parking. We're conveniently located in downtown Felton.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- On Foot -->
+            <div class="col-md-6 col-lg-3">
+                <div class="transport-card text-center p-4 bg-white rounded-3 shadow-sm h-100">
+                    <div class="transport-icon bg-success text-white rounded-circle p-3 mx-auto mb-3" style="width: 60px; height: 60px;">
+                        <i class="bi bi-person-walking fs-4"></i>
+                    </div>
+                    <h5>Walking</h5>
+                    <p class="text-muted small">
+                        Perfect for a leisurely stroll through Felton's charming downtown area.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- By Bike -->
+            <div class="col-md-6 col-lg-3">
+                <div class="transport-card text-center p-4 bg-white rounded-3 shadow-sm h-100">
+                    <div class="transport-icon bg-warning text-dark rounded-circle p-3 mx-auto mb-3" style="width: 60px; height: 60px;">
+                        <i class="bi bi-bicycle fs-4"></i>
+                    </div>
+                    <h5>By Bike</h5>
+                    <p class="text-muted small">
+                        Bike-friendly location with secure bike parking available.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Public Transit -->
+            <div class="col-md-6 col-lg-3">
+                <div class="transport-card text-center p-4 bg-white rounded-3 shadow-sm h-100">
+                    <div class="transport-icon bg-info text-white rounded-circle p-3 mx-auto mb-3" style="width: 60px; height: 60px;">
+                        <i class="bi bi-bus-front fs-4"></i>
+                    </div>
+                    <h5>Public Transit</h5>
+                    <p class="text-muted small">
+                        Accessible by local public transportation. Check schedules for the latest info.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact CTA -->
+<section class="contact-cta py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h3 class="mb-3">Need Help Finding Us?</h3>
+        <p class="lead mb-4">
+            Don't hesitate to reach out if you need directions or have any questions about visiting us.
+        </p>
+        
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            {% if business_info.phone %}
+            <a href="tel:{{ business_info.phone }}" class="btn btn-light btn-lg">
+                <i class="bi bi-telephone me-2"></i>Call Us
+            </a>
+            {% endif %}
+            
+            <a href="{% url 'core:contact' %}" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-envelope me-2"></i>Send Message
+            </a>
+            
+            {% if business_info and business_info.address %}
+            <a href="https://maps.google.com/?q={{ business_info.address|urlencode }}" 
+               target="_blank" 
+               class="btn btn-outline-light btn-lg">
+                <i class="bi bi-map me-2"></i>Directions
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.bg-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.text-white-50 {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.location-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hour-item:last-child {
+    border-bottom: none !important;
+}
+
+.transport-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.transport-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.transport-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.note-item {
+    transition: transform 0.2s ease;
+}
+
+.note-item:hover {
+    transform: translateX(5px);
+}
+
+.map-placeholder {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed #dee2e6;
+}
+
+.address-card {
+    border: 1px solid #e9ecef;
+}
+
+.current-status-badge {
+    animation: pulse-glow 2s infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.current-status-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: shine 3s infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% { 
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    50% { 
+        box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+}
+
+@keyframes shine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2.5rem;
+    }
+    
+    .transport-card {
+        margin-bottom: 1rem;
+    }
+}
+</style>
+{% endblock %}

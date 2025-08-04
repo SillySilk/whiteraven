@@ -1,0 +1,376 @@
+{% extends 'base.html' %}
+{% load static menu_image_tags %}
+
+{% block title %}{{ menu_item.name }} - Menu - {{ business_info.name|default:"White Raven Pourhouse" }}{% endblock %}
+
+{% block meta_description %}{{ menu_item.name }} - {{ menu_item.description|truncatewords:20 }} Available at White Raven Pourhouse in Felton, CA.{% endblock %}
+
+{% block content %}
+<!-- Menu Item Header -->
+<section class="menu-item-header py-5 bg-light">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'core:home' %}" class="text-decoration-none">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'menu:menu_list' %}" class="text-decoration-none">Menu</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'menu:menu_list' %}?category={{ menu_item.category.slug }}" class="text-decoration-none">
+                        {{ menu_item.category.name }}
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">{{ menu_item.name }}</li>
+            </ol>
+        </nav>
+        
+        <div class="row g-5 align-items-center">
+            <!-- Item Image Gallery -->
+            <div class="col-lg-6">
+                {% menu_image_gallery menu_item %}
+            </div>
+            
+            <!-- Item Details -->
+            <div class="col-lg-6">
+                <div class="item-details">
+                    <!-- Category Badge -->
+                    <div class="mb-3">
+                        <a href="{% url 'menu:menu_list' %}?category={{ menu_item.category.slug }}" 
+                           class="badge bg-primary text-decoration-none fs-6">
+                            <i class="bi bi-tag me-1"></i>{{ menu_item.category.name }}
+                        </a>
+                    </div>
+                    
+                    <!-- Item Name & Price -->
+                    <h1 class="display-5 fw-bold mb-3">{{ menu_item.name }}</h1>
+                    <div class="price-container mb-4">
+                        <span class="price display-6 text-primary fw-bold">{{ menu_item.display_price }}</span>
+                    </div>
+                    
+                    <!-- Description -->
+                    <p class="lead text-muted mb-4">{{ menu_item.description }}</p>
+                    
+                    <!-- Item Attributes -->
+                    <div class="item-attributes mb-4">
+                        <div class="row g-3">
+                            {% if menu_item.contains_caffeine %}
+                            <div class="col-auto">
+                                <span class="badge bg-warning text-dark">
+                                    <i class="bi bi-lightning-charge-fill me-1"></i>Contains Caffeine
+                                </span>
+                            </div>
+                            {% endif %}
+                            
+                            {% if menu_item.temperature != 'both' %}
+                            <div class="col-auto">
+                                <span class="badge bg-info">
+                                    <i class="bi bi-thermometer me-1"></i>{{ menu_item.get_temperature_display }}
+                                </span>
+                            </div>
+                            {% endif %}
+                            
+                            {% if menu_item.size != 'one_size' %}
+                            <div class="col-auto">
+                                <span class="badge bg-secondary">
+                                    <i class="bi bi-cup me-1"></i>{{ menu_item.get_size_display }}
+                                </span>
+                            </div>
+                            {% endif %}
+                            
+                            {% if menu_item.preparation_time %}
+                            <div class="col-auto">
+                                <span class="badge bg-light text-dark">
+                                    <i class="bi bi-clock me-1"></i>{{ menu_item.preparation_time }} min prep
+                                </span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Dietary Notes -->
+                    {% if menu_item.dietary_notes %}
+                    <div class="dietary-info mb-4">
+                        <h6 class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Dietary Information
+                        </h6>
+                        <p class="text-success mb-0">{{ menu_item.dietary_notes }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Calories -->
+                    {% if menu_item.calories %}
+                    <div class="calories-info mb-4">
+                        <h6 class="mb-2">
+                            <i class="bi bi-speedometer2 text-info me-2"></i>
+                            Nutritional Information
+                        </h6>
+                        <p class="text-muted mb-0">{{ menu_item.calories }} calories per serving</p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <div class="d-flex flex-wrap gap-3">
+                            <a href="{% url 'core:contact' %}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-chat-dots me-2"></i>Ask About This Item
+                            </a>
+                            
+                            <a href="{% url 'menu:menu_list' %}" class="btn btn-outline-primary btn-lg">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Menu
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recipe Information (if available) -->
+{% if menu_item.recipe %}
+<section class="recipe-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="recipe-card bg-light rounded-3 p-4">
+                    <h3 class="mb-4">
+                        <i class="bi bi-journal-text text-primary me-2"></i>
+                        How We Make It
+                    </h3>
+                    
+                    <div class="row g-4">
+                        <!-- Ingredients -->
+                        <div class="col-md-6">
+                            <h5 class="mb-3">
+                                <i class="bi bi-list-ul me-2"></i>Ingredients
+                            </h5>
+                            <ul class="list-unstyled">
+                                {% for ingredient in menu_item.recipe.ingredients_list %}
+                                <li class="mb-2">
+                                    <i class="bi bi-check text-success me-2"></i>{{ ingredient }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <!-- Preparation Info -->
+                        <div class="col-md-6">
+                            <h5 class="mb-3">
+                                <i class="bi bi-info-circle me-2"></i>Preparation Details
+                            </h5>
+                            
+                            <div class="prep-details">
+                                <div class="detail-item mb-2">
+                                    <strong>Prep Time:</strong> {{ menu_item.recipe.prep_time }} minutes
+                                </div>
+                                
+                                <div class="detail-item mb-2">
+                                    <strong>Difficulty:</strong> 
+                                    <span class="badge bg-{% if menu_item.recipe.difficulty == 'easy' %}success{% elif menu_item.recipe.difficulty == 'medium' %}warning{% else %}danger{% endif %}">
+                                        {{ menu_item.recipe.get_difficulty_display }}
+                                    </span>
+                                </div>
+                                
+                                <div class="detail-item mb-2">
+                                    <strong>Yield:</strong> {{ menu_item.recipe.yield_quantity }}
+                                </div>
+                                
+                                {% if menu_item.recipe.equipment_needed %}
+                                <div class="detail-item">
+                                    <strong>Equipment:</strong> {{ menu_item.recipe.equipment_needed }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Instructions -->
+                    {% if menu_item.recipe.instructions_list %}
+                    <div class="instructions mt-4">
+                        <h5 class="mb-3">
+                            <i class="bi bi-gear me-2"></i>Preparation Steps
+                        </h5>
+                        <ol class="list-group list-group-numbered">
+                            {% for step_num, instruction in menu_item.recipe.instructions_list %}
+                            <li class="list-group-item">{{ instruction }}</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Notes -->
+                    {% if menu_item.recipe.notes %}
+                    <div class="recipe-notes mt-4">
+                        <h6 class="mb-2">
+                            <i class="bi bi-lightbulb text-warning me-2"></i>
+                            Chef's Notes
+                        </h6>
+                        <p class="text-muted fst-italic">{{ menu_item.recipe.notes }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Related Items -->
+{% if related_items %}
+<section class="related-items py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h3 class="fw-bold">You Might Also Like</h3>
+            <p class="text-muted">Other great items from our {{ menu_item.category.name }} category</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for item in related_items %}
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm related-item-card">
+                    <a href="{% url 'menu:menu_item_detail' item.slug %}" class="text-decoration-none">
+                        {% if item.image %}
+                        <img src="{{ item.image.url }}" 
+                             class="card-img-top" 
+                             alt="{{ item.name }}"
+                             style="height: 200px; object-fit: cover;">
+                        {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="bi bi-image fs-2 text-muted"></i>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="card-title text-dark mb-0">{{ item.name }}</h6>
+                                <span class="badge bg-primary">{{ item.display_price }}</span>
+                            </div>
+                            
+                            <p class="card-text text-muted small">{{ item.description|truncatewords:10 }}</p>
+                            
+                            {% if item.dietary_notes %}
+                            <small class="text-success">
+                                <i class="bi bi-check-circle me-1"></i>{{ item.dietary_notes }}
+                            </small>
+                            {% endif %}
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'menu:menu_list' %}?category={{ menu_item.category.slug }}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-right me-2"></i>View All {{ menu_item.category.name }}
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Call to Action -->
+<section class="item-cta py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h3 class="mb-3">Ready to Try {{ menu_item.name }}?</h3>
+        <p class="lead mb-4">Visit us today and experience this delicious item for yourself!</p>
+        
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <a href="{% url 'core:location' %}" class="btn btn-light btn-lg">
+                <i class="bi bi-geo-alt me-2"></i>Find Us
+            </a>
+            
+            {% if business_info.phone %}
+            <a href="tel:{{ business_info.phone }}" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-telephone me-2"></i>Call Ahead
+            </a>
+            {% endif %}
+            
+            <a href="{% url 'core:contact' %}" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-envelope me-2"></i>Ask Questions
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.item-image-placeholder {
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed #dee2e6;
+}
+
+.price {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.item-attributes .badge {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.related-item-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+}
+
+.related-item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.related-item-card .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.recipe-card {
+    border: 1px solid #e9ecef;
+}
+
+.list-group-numbered .list-group-item {
+    border: none;
+    background-color: transparent;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.list-group-numbered .list-group-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: ">";
+}
+
+@media (max-width: 768px) {
+    .display-5 {
+        font-size: 2rem;
+    }
+    
+    .display-6 {
+        font-size: 1.5rem;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
+{% endblock %}
