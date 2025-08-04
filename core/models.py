@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from colorfield.fields import ColorField
 
 class BusinessInfo(models.Model):
     """
@@ -434,3 +435,179 @@ class ContactSubmission(models.Model):
         if self.subject == 'other' and self.custom_subject:
             return self.custom_subject
         return self.get_subject_display()
+
+
+class SiteTheme(models.Model):
+    """
+    Site-wide theme customization model.
+    Singleton model - only one active theme at a time.
+    """
+    name = models.CharField(
+        max_length=100,
+        default="White Raven Theme",
+        help_text="Theme name for identification"
+    )
+    
+    # Primary colors
+    primary_color = ColorField(
+        default='#6f4f28',  # Coffee brown
+        help_text="Primary brand color (used for buttons, links)"
+    )
+    
+    secondary_color = ColorField(
+        default='#8b7355',  # Lighter brown
+        help_text="Secondary color (used for accents, hover states)"
+    )
+    
+    accent_color = ColorField(
+        default='#d4af37',  # Gold
+        help_text="Accent color (used for highlights, CTAs)"
+    )
+    
+    # Text colors
+    text_color = ColorField(
+        default='#2c3e50',  # Dark gray-blue
+        help_text="Main text color"
+    )
+    
+    text_light = ColorField(
+        default='#6c757d',  # Bootstrap gray
+        help_text="Light text color (for descriptions, captions)"
+    )
+    
+    # Background colors
+    background_color = ColorField(
+        default='#ffffff',  # White
+        help_text="Main background color"
+    )
+    
+    background_secondary = ColorField(
+        default='#f8f9fa',  # Light gray
+        help_text="Secondary background (for sections, cards)"
+    )
+    
+    # Navigation colors
+    navbar_bg = ColorField(
+        default='#ffffff',  # White
+        help_text="Navigation bar background color"
+    )
+    
+    navbar_text = ColorField(
+        default='#2c3e50',  # Dark gray-blue
+        help_text="Navigation bar text color"
+    )
+    
+    navbar_hover = ColorField(
+        default='#6f4f28',  # Coffee brown
+        help_text="Navigation bar hover color"
+    )
+    
+    # Button colors
+    button_primary_bg = ColorField(
+        default='#6f4f28',  # Coffee brown
+        help_text="Primary button background"
+    )
+    
+    button_primary_text = ColorField(
+        default='#ffffff',  # White
+        help_text="Primary button text color"
+    )
+    
+    button_secondary_bg = ColorField(
+        default='#8b7355',  # Lighter brown
+        help_text="Secondary button background"
+    )
+    
+    button_secondary_text = ColorField(
+        default='#ffffff',  # White
+        help_text="Secondary button text color"
+    )
+    
+    # Menu page decoration image
+    menu_decoration_image = models.ImageField(
+        upload_to='site_theme/menu/',
+        blank=True,
+        null=True,
+        help_text="Decorative image for menu page (replaces the white stats box). Recommended size: 400x300px"
+    )
+    
+    menu_decoration_alt_text = models.CharField(
+        max_length=200,
+        blank=True,
+        default="White Raven Pourhouse decoration",
+        help_text="Alt text for the menu decoration image (for accessibility)"
+    )
+    
+    # Footer colors
+    footer_bg = ColorField(
+        default='#2c3e50',  # Dark gray-blue
+        help_text="Footer background color"
+    )
+    
+    footer_text = ColorField(
+        default='#ffffff',  # White
+        help_text="Footer text color"
+    )
+    
+    footer_link = ColorField(
+        default='#d4af37',  # Gold
+        help_text="Footer link color"
+    )
+    
+    # Status
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Whether this theme is currently active"
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Site Theme"
+        verbose_name_plural = "Site Themes"
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.name} {'(Active)' if self.is_active else ''}"
+    
+    def save(self, *args, **kwargs):
+        """Ensure only one active theme exists"""
+        if self.is_active:
+            # Deactivate all other themes
+            SiteTheme.objects.filter(is_active=True).update(is_active=False)
+        super().save(*args, **kwargs)
+    
+    @classmethod
+    def get_active_theme(cls):
+        """Get the currently active theme or create default if none exists"""
+        active_theme = cls.objects.filter(is_active=True).first()
+        if not active_theme:
+            # Create default theme
+            active_theme = cls.objects.create(
+                name="Default White Raven Theme",
+                is_active=True
+            )
+        return active_theme
+    
+    def get_css_variables(self):
+        """Return CSS custom properties for this theme"""
+        return {
+            '--theme-primary': self.primary_color,
+            '--theme-secondary': self.secondary_color,
+            '--theme-accent': self.accent_color,
+            '--theme-text': self.text_color,
+            '--theme-text-light': self.text_light,
+            '--theme-bg': self.background_color,
+            '--theme-bg-secondary': self.background_secondary,
+            '--theme-navbar-bg': self.navbar_bg,
+            '--theme-navbar-text': self.navbar_text,
+            '--theme-navbar-hover': self.navbar_hover,
+            '--theme-btn-primary-bg': self.button_primary_bg,
+            '--theme-btn-primary-text': self.button_primary_text,
+            '--theme-btn-secondary-bg': self.button_secondary_bg,
+            '--theme-btn-secondary-text': self.button_secondary_text,
+            '--theme-footer-bg': self.footer_bg,
+            '--theme-footer-text': self.footer_text,
+            '--theme-footer-link': self.footer_link,
+        }

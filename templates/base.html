@@ -29,26 +29,101 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
     
-    <!-- Admin Theme Colors Integration -->
+    <!-- Site Theme Colors Integration -->
     <style>
         :root {
-            /* Admin theme colors available in all templates */
+            {% if site_theme_vars %}
+                /* Site theme CSS variables */
+                {% for var_name, var_value in site_theme_vars.items %}
+                {{ var_name }}: {{ var_value }};
+                {% endfor %}
+            {% else %}
+                /* Fallback theme colors */
+                --theme-primary: #6f4f28;
+                --theme-secondary: #8b7355;
+                --theme-accent: #d4af37;
+                --theme-text: #2c3e50;
+                --theme-text-light: #6c757d;
+                --theme-bg: #ffffff;
+                --theme-bg-secondary: #f8f9fa;
+                --theme-navbar-bg: #ffffff;
+                --theme-navbar-text: #2c3e50;
+                --theme-navbar-hover: #6f4f28;
+                --theme-btn-primary-bg: #6f4f28;
+                --theme-btn-primary-text: #ffffff;
+                --theme-btn-secondary-bg: #8b7355;
+                --theme-btn-secondary-text: #ffffff;
+                --theme-footer-bg: #2c3e50;
+                --theme-footer-text: #ffffff;
+                --theme-footer-link: #d4af37;
+            {% endif %}
+            
+            /* Legacy admin theme colors for backward compatibility */
             --primary-color: {{ theme_colors.primary }};
             --primary-text: {{ theme_colors.primary_text }};
-            --primary-light: {{ theme_colors.primary_light }};
-            --content-bg: {{ theme_colors.content_bg }};
-            --content-text: {{ theme_colors.content_text }};
-            --content-selected: {{ theme_colors.content_selected }};
             --link-color: {{ theme_colors.link_color }};
             --link-hover: {{ theme_colors.link_hover }};
-            --link-active: {{ theme_colors.link_active }};
             --button-bg: {{ theme_colors.button_bg }};
-            --button-bg-hover: {{ theme_colors.button_bg_hover }};
             --button-text: {{ theme_colors.button_text }};
         }
         
-        /* Apply admin theme colors to public website */
-        .navbar-dark {
+        /* Apply theme colors to public website */
+        .navbar {
+            background-color: var(--theme-navbar-bg) !important;
+            color: var(--theme-navbar-text) !important;
+        }
+        
+        .navbar-nav .nav-link {
+            color: var(--theme-navbar-text) !important;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            color: var(--theme-navbar-hover) !important;
+        }
+        
+        .btn-primary {
+            background-color: var(--theme-btn-primary-bg) !important;
+            border-color: var(--theme-btn-primary-bg) !important;
+            color: var(--theme-btn-primary-text) !important;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--theme-secondary) !important;
+            border-color: var(--theme-secondary) !important;
+        }
+        
+        .btn-secondary {
+            background-color: var(--theme-btn-secondary-bg) !important;
+            border-color: var(--theme-btn-secondary-bg) !important;
+            color: var(--theme-btn-secondary-text) !important;
+        }
+        
+        a {
+            color: var(--theme-primary) !important;
+        }
+        
+        a:hover {
+            color: var(--theme-secondary) !important;
+        }
+        
+        .text-primary {
+            color: var(--theme-primary) !important;
+        }
+        
+        .bg-primary {
+            background-color: var(--theme-primary) !important;
+        }
+        
+        .menu-decoration-image {
+            transition: transform 0.3s ease;
+        }
+        
+        .menu-decoration-image:hover {
+            transform: scale(1.02);
+        }
+        
+        /* Legacy admin theme colors for backward compatibility */
+        .legacy-navbar-dark {
             background-color: var(--primary-color) !important;
         }
         

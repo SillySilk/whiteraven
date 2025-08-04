@@ -1,6 +1,5 @@
 """
-Context processor to make admin theme colors available to public templates.
-This allows the public website to use the same colors as the admin interface.
+Context processors for theme and business information.
 """
 
 def admin_theme_colors(request):
@@ -78,6 +77,28 @@ def admin_theme_colors(request):
             'theme_name': 'Default White Raven',
         }
     }
+
+
+def site_theme(request):
+    """
+    Make site theme available to all templates.
+    """
+    try:
+        from core.models import SiteTheme
+        active_theme = SiteTheme.get_active_theme()
+        return {
+            'site_theme': active_theme,
+            'site_theme_vars': active_theme.get_css_variables()
+        }
+    except Exception as e:
+        # Log the error but don't break the site
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"Could not load site theme: {e}")
+        return {
+            'site_theme': None,
+            'site_theme_vars': {}
+        }
 
 
 def business_info(request):

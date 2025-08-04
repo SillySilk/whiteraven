@@ -27,10 +27,19 @@
             </div>
             
             <div class="col-lg-4 text-lg-end">
-                <div class="menu-stats bg-white rounded-3 p-4 shadow-sm">
-                    <h5 class="mb-3">Quality Coffee & More</h5>
-                    <p class="text-muted mb-0">Fresh brewed daily with the finest ingredients</p>
-                </div>
+                {% if site_theme.menu_decoration_image %}
+                    <div class="menu-decoration-container">
+                        <img src="{{ site_theme.menu_decoration_image.url }}" 
+                             alt="{{ site_theme.menu_decoration_alt_text }}"
+                             class="img-fluid rounded-3 shadow-sm menu-decoration-image"
+                             style="max-height: 200px; width: auto;">
+                    </div>
+                {% else %}
+                    <div class="menu-stats bg-white rounded-3 p-4 shadow-sm">
+                        <h5 class="mb-3">Quality Coffee & More</h5>
+                        <p class="text-muted mb-0">Fresh brewed daily with the finest ingredients</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

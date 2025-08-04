@@ -6,7 +6,7 @@ from django.db.models import Count, Q
 from django.utils import timezone
 from django.contrib import messages
 from datetime import datetime, timedelta
-from .models import BusinessInfo, ContactSubmission
+from .models import BusinessInfo, ContactSubmission, SiteTheme
 from .email_utils import EmailService
 
 @admin.register(BusinessInfo)
@@ -271,6 +271,130 @@ class ContactSubmissionAdmin(admin.ModelAdmin):
             'all': ('admin/css/custom_admin.css',)
         }
 
+
+@admin.register(SiteTheme)
+class SiteThemeAdmin(admin.ModelAdmin):
+    """
+    Admin interface for managing site themes.
+    """
+    list_display = ('name', 'is_active', 'theme_preview', 'updated_at')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('name',)
+    readonly_fields = ('created_at', 'updated_at', 'theme_preview')
+    
+    fieldsets = (
+        ('Theme Information', {
+            'fields': ('name', 'is_active')
+        }),
+        ('Primary Colors', {
+            'fields': ('primary_color', 'secondary_color', 'accent_color'),
+            'description': 'Main brand colors used throughout the site'
+        }),
+        ('Text Colors', {
+            'fields': ('text_color', 'text_light'),
+            'description': 'Text colors for readability and hierarchy'
+        }),
+        ('Background Colors', {
+            'fields': ('background_color', 'background_secondary'),
+            'description': 'Background colors for main content and sections'
+        }),
+        ('Navigation Colors', {
+            'fields': ('navbar_bg', 'navbar_text', 'navbar_hover'),
+            'description': 'Navigation bar color scheme'
+        }),
+        ('Button Colors', {
+            'fields': ('button_primary_bg', 'button_primary_text', 'button_secondary_bg', 'button_secondary_text'),
+            'description': 'Button styling colors'
+        }),
+        ('Footer Colors', {
+            'fields': ('footer_bg', 'footer_text', 'footer_link'),
+            'description': 'Footer color scheme'
+        }),
+        ('Menu Page Decoration', {
+            'fields': ('menu_decoration_image', 'menu_decoration_alt_text'),
+            'description': 'Upload a decorative image to replace the white stats box on the menu page'
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def theme_preview(self, obj):
+        """Show a preview of the theme colors"""
+        if obj:
+            return format_html(
+                '<div style="display: flex; gap: 5px;">'
+                '<div style="width: 20px; height: 20px; background-color: {}; border: 1px solid #ccc;" title="Primary"></div>'
+                '<div style="width: 20px; height: 20px; background-color: {}; border: 1px solid #ccc;" title="Secondary"></div>'
+                '<div style="width: 20px; height: 20px; background-color: {}; border: 1px solid #ccc;" title="Accent"></div>'
+                '<div style="width: 20px; height: 20px; background-color: {}; border: 1px solid #ccc;" title="Text"></div>'
+                '</div>',
+                obj.primary_color,
+                obj.secondary_color,
+                obj.accent_color,
+                obj.text_color
+            )
+        return '-'
+    theme_preview.short_description = 'Color Preview'
+    
+    def save_model(self, request, obj, form, change):
+        """Ensure only one active theme and show success message"""
+        super().save_model(request, obj, form, change)
+        
+        if obj.is_active:
+            self.message_user(
+                request,
+                f'Theme "{obj.name}" is now active and will be applied to the website.',
+                level=messages.SUCCESS
+            )
+    
+    def has_delete_permission(self, request, obj=None):
+        """Prevent deletion of active theme"""
+        if obj and obj.is_active:
+            return False
+        return super().has_delete_permission(request, obj)
+    
+    actions = ['activate_theme', 'duplicate_theme']
+    
+    def activate_theme(self, request, queryset):
+        """Bulk action to activate a theme"""
+        if queryset.count() != 1:
+            self.message_user(
+                request, 
+                'Please select exactly one theme to activate.',
+                level=messages.ERROR
+            )
+            return
+        
+        theme = queryset.first()
+        SiteTheme.objects.filter(is_active=True).update(is_active=False)
+        theme.is_active = True
+        theme.save()
+        
+        self.message_user(
+            request,
+            f'Theme "{theme.name}" has been activated.',
+            level=messages.SUCCESS
+        )
+    activate_theme.short_description = "Activate selected theme"
+    
+    def duplicate_theme(self, request, queryset):
+        """Bulk action to duplicate themes"""
+        for theme in queryset:
+            theme.pk = None
+            theme.name = f"{theme.name} (Copy)"
+            theme.is_active = False
+            theme.save()
+        
+        count = queryset.count()
+        self.message_user(
+            request,
+            f'Successfully duplicated {count} theme(s).',
+            level=messages.SUCCESS
+        )
+    duplicate_theme.short_description = "Duplicate selected themes"
+
 class WhiteRavenAdminSite(AdminSite):
     """
     Custom Admin Site for White Raven Pourhouse with enhanced dashboard
@@ -373,6 +497,7 @@ admin_site = WhiteRavenAdminSite(name='white_raven_admin')
 # Register models with custom admin site
 admin_site.register(BusinessInfo, BusinessInfoAdmin)
 admin_site.register(ContactSubmission, ContactSubmissionAdmin)
+admin_site.register(SiteTheme, SiteThemeAdmin)
 
 # Also customize default admin site
 admin.site.site_header = "White Raven Pourhouse Admin"

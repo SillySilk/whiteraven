@@ -72,6 +72,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "core.theme_context.admin_theme_colors",
+                "core.theme_context.site_theme",
                 "core.theme_context.business_info",
             ],
         },
