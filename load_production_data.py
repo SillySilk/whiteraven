@@ -11,7 +11,7 @@ from decimal import Decimal
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'white_raven_pourhouse.settings')
 django.setup()
 
-from core.models import BusinessInfo
+from core.models import BusinessInfo, SiteTheme
 from menu.models import Category, MenuItem
 from staff.models import Employee
 from admin_interface.models import Theme
@@ -29,18 +29,22 @@ def main():
             'tagline': 'Artisan Coffee & Community Hub',
             'description': 'A cozy neighborhood coffee shop serving exceptional coffee, fresh pastries, and fostering community connections in the heart of Felton, California.',
             'address': '123 Main Street, Felton, CA 95018',
-            'phone': '(831) 555-BREW',
+            'phone': '+18315552739',  # (831) 555-BREW in proper format
             'email': 'hello@whiteravenpourhouse.com',
-            'hours_monday': '6:00 AM - 6:00 PM',
-            'hours_tuesday': '6:00 AM - 6:00 PM',
-            'hours_wednesday': '6:00 AM - 6:00 PM',
-            'hours_thursday': '6:00 AM - 6:00 PM',
-            'hours_friday': '6:00 AM - 8:00 PM',
-            'hours_saturday': '7:00 AM - 8:00 PM',
-            'hours_sunday': '7:00 AM - 6:00 PM',
-            'website': 'https://whiteravenpourhouse.com',
-            'instagram': '@whiteravenpourhouse',
-            'facebook': 'White Raven Pourhouse',
+            'hours': {
+                'monday': {'open': '06:00', 'close': '18:00', 'closed': False},
+                'tuesday': {'open': '06:00', 'close': '18:00', 'closed': False},
+                'wednesday': {'open': '06:00', 'close': '18:00', 'closed': False},
+                'thursday': {'open': '06:00', 'close': '18:00', 'closed': False},
+                'friday': {'open': '06:00', 'close': '20:00', 'closed': False},
+                'saturday': {'open': '07:00', 'close': '20:00', 'closed': False},
+                'sunday': {'open': '07:00', 'close': '18:00', 'closed': False},
+            },
+            'instagram_handle': 'whiteravenpourhouse',
+            'facebook_url': 'https://facebook.com/whiteravenpourhouse',
+            'instagram_url': 'https://instagram.com/whiteravenpourhouse',
+            'meta_description': 'White Raven Pourhouse - Artisan Coffee & Community Hub in Felton, CA. Serving exceptional coffee, fresh pastries, and fostering community connections.',
+            'welcome_message': 'Welcome to White Raven Pourhouse, where every cup tells a story and every visit feels like home.',
         }
     )
     print(f"✓ Business info: {business_info.name}")
@@ -84,6 +88,33 @@ def main():
         related_modal=True,
     )
     print(f"✓ Admin theme: {theme.name}")
+    
+    # Site Theme (frontend colors)
+    print("Setting up site theme...")
+    site_theme, created = SiteTheme.objects.get_or_create(
+        name="White Raven Theme",
+        defaults={
+            'primary_color': '#6f4f28',      # Coffee brown
+            'secondary_color': '#8b7355',    # Lighter brown  
+            'accent_color': '#d4af37',       # Gold
+            'text_color': '#2c3e50',         # Dark gray-blue
+            'text_light': '#6c757d',         # Bootstrap gray
+            'background_color': '#ffffff',   # White
+            'background_secondary': '#f8f9fa', # Light gray
+            'navbar_bg': '#ffffff',          # White
+            'navbar_text': '#2c3e50',        # Dark gray-blue
+            'navbar_hover': '#6f4f28',       # Coffee brown
+            'button_primary_bg': '#6f4f28',  # Coffee brown
+            'button_primary_text': '#ffffff', # White
+            'button_secondary_bg': '#8b7355', # Lighter brown
+            'button_secondary_text': '#ffffff', # White
+            'footer_bg': '#2c3e50',          # Dark gray-blue
+            'footer_text': '#ffffff',        # White
+            'footer_link': '#d4af37',        # Gold
+            'is_active': True,
+        }
+    )
+    print(f"✓ Site theme: {site_theme.name}")
     
     # Categories
     print("Setting up menu categories...")
