@@ -94,8 +94,15 @@ WSGI_APPLICATION = "white_raven_pourhouse.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Default to SQLite for development, MySQL for production
-if os.environ.get('PRODUCTION') == 'True':
+import dj_database_url
+
+# Use DATABASE_URL if available (Render PostgreSQL), otherwise fallback
+if 'DATABASE_URL' in os.environ:
+    # Render PostgreSQL configuration
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+    }
+elif os.environ.get('PRODUCTION') == 'True':
     # PythonAnywhere MySQL configuration
     DATABASES = {
         'default': {
