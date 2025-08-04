@@ -234,6 +234,7 @@ class FileUploadSecurityMiddleware(MiddlewareMixin):
         # Check file size
         max_size = getattr(settings, 'MAX_UPLOAD_SIZE', 5242880)  # 5MB
         if uploaded_file.size > max_size:
+            logger.warning(f"File upload rejected: size {uploaded_file.size} exceeds limit {max_size}")
             return False
         
         # Check file extension
@@ -243,17 +244,28 @@ class FileUploadSecurityMiddleware(MiddlewareMixin):
         # Check against blocked extensions
         blocked_extensions = getattr(settings, 'BLOCKED_EXTENSIONS', [])
         if ext in blocked_extensions:
+            logger.warning(f"File upload rejected: extension {ext} is blocked")
             return False
         
         # Check against allowed extensions for images
         if hasattr(uploaded_file, 'content_type'):
             allowed_mime_types = getattr(settings, 'ALLOWED_MIME_TYPES', [])
             if allowed_mime_types and uploaded_file.content_type not in allowed_mime_types:
+                logger.warning(f"File upload rejected: MIME type '{uploaded_file.content_type}' not in allowed types {allowed_mime_types}")
+                logger.info(f"File details: name={uploaded_file.name}, size={uploaded_file.size}, content_type={uploaded_file.content_type}")
                 return False
         
-        # Additional checks could include:
-        # - File signature validation
-        # - Virus scanning (if available)
-        # - Content inspection
+        # For image uploads, also check if it's a valid image file
+        if ext in ['.jpg', '.jpeg', '.png', '.webp', '.gif']:
+            try:
+                from PIL import Image
+                # Try to verify it's a valid image
+                with Image.open(uploaded_file) as img:
+                    img.verify()
+                uploaded_file.seek(0)  # Reset file pointer
+                logger.info(f"Valid image file uploaded: {uploaded_file.name}")
+            except Exception as e:
+                logger.warning(f"File upload rejected: not a valid image file: {e}")
+                return False
         
         return True

@@ -13,3 +13,7 @@ pytz==2024.1
 
 # For development and testing
 django-extensions==3.2.3
+
+# Admin interface theming and color management
+django-admin-interface==0.30.1
+django-colorfield==0.14.0

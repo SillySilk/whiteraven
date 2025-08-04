@@ -32,6 +32,8 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver'
 # Application definition
 
 INSTALLED_APPS = [
+    "admin_interface",
+    "colorfield",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -69,6 +71,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "core.theme_context.admin_theme_colors",
+                "core.theme_context.business_info",
             ],
         },
     },
@@ -306,8 +310,11 @@ FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o755  # Secure directory permissions
 ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp']  # Removed .gif for security
 ALLOWED_MIME_TYPES = [
     'image/jpeg',
+    'image/jpg',  # Some systems use this variant
     'image/png', 
-    'image/webp'
+    'image/webp',
+    'image/pjpeg',  # Progressive JPEG
+    'image/x-png',  # Alternative PNG MIME type
 ]
 MAX_UPLOAD_SIZE = 5242880  # 5MB maximum file size
 

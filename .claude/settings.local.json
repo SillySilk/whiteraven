@@ -46,7 +46,8 @@
       "Bash(\"venv\\Scripts\\python.exe\" -c \"\nimport os\nimport django\nfrom decimal import Decimal\nos.environ[''DJANGO_SETTINGS_MODULE''] = ''white_raven_pourhouse.settings''\ndjango.setup()\n\nfrom menu.models import MenuItem, Category\n\nprint(''=== Admin Functionality Confirmation ==='')\nprint()\n\n# Test that we can edit prices\nprint(''✅ PRICE EDITING TEST:'')\ntest_item = MenuItem.objects.first()\noriginal_price = test_item.price\nprint(f''   Item: {test_item.name}'')\nprint(f''   Original price: {test_item.display_price}'')\n\n# Change price\ntest_item.price = original_price + Decimal(''0.50'')\ntest_item.save()\nprint(f''   After edit: {test_item.display_price}'')\n\n# Revert price\ntest_item.price = original_price\ntest_item.save()\nprint(f''   Reverted to: {test_item.display_price}'')\nprint()\n\n# Test image field\nprint(''✅ IMAGE FIELD TEST:'')\nprint(f''   Items with images: {MenuItem.objects.exclude(image=\"\"\"\").count()}'')\nprint(f''   Items without images: {MenuItem.objects.filter(image=\"\"\"\").count()}'')\nprint()\n\n# Test admin display fields\nprint(''✅ ADMIN DISPLAY FIELDS:'')\nsample_items = MenuItem.objects.all()[:3]\nfor item in sample_items:\n    print(f''   {item.name}:'')\n    print(f''     - Price display: {item.display_price}'')\n    print(f''     - Category: {item.category.name}'')\n    print(f''     - Available: {item.available}'')\n    print(f''     - Has image: {item.has_image()}'')\n    print()\n\nprint(''✅ All admin functionality is working correctly!'')\nprint(''✅ Prices can be edited through Django admin'')\nprint(''✅ Images can be uploaded through Django admin'')\nprint(''✅ All menu fields are accessible and editable'')\n\")",
       "Bash(\"venv\\Scripts\\python.exe\":*)",
       "Bash(timeout:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }

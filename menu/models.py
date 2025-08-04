@@ -203,11 +203,14 @@ class MenuItem(models.Model):
         super().save(*args, **kwargs)
         
         # Handle image processing after save (when we have an ID)
-        if self.image and hasattr(self.image, '_file'):
+        if self.image:
             try:
                 # Create multiple image sizes for responsive display
                 base_name = f"{self.slug}_{self.pk}"
-                create_multiple_sizes(self.image._file, base_name)
+                
+                # Use the saved image file instead of _file attribute
+                with self.image.open('rb') as image_file:
+                    create_multiple_sizes(image_file, base_name)
                 
                 # Clean up old images if they exist and are different
                 if old_image_path and old_image_path != self.image.name:

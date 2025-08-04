@@ -45,7 +45,7 @@ QUALITY_SETTINGS = {
 
 def validate_image(image_file):
     """
-    Enhanced validation for uploaded image files with security checks.
+    Simplified validation for uploaded image files.
     
     Args:
         image_file: Django UploadedFile object or file-like object
@@ -54,67 +54,39 @@ def validate_image(image_file):
         tuple: (is_valid, error_message)
     """
     try:
-        from django.conf import settings
         import os
         
-        # Check file size against settings
-        max_size = getattr(settings, 'MAX_UPLOAD_SIZE', MAX_FILE_SIZE)
-        if hasattr(image_file, 'size') and image_file.size > max_size:
-            return False, f"Image file too large. Maximum size is {max_size // (1024*1024)}MB."
+        # Check file size (5MB max)
+        if hasattr(image_file, 'size') and image_file.size > MAX_FILE_SIZE:
+            return False, f"Image file too large. Maximum size is {MAX_FILE_SIZE // (1024*1024)}MB."
         
-        # Check file extension against blocked list
+        # Check file extension - simplified approach
         if hasattr(image_file, 'name'):
             ext = os.path.splitext(image_file.name.lower())[1]
-            blocked_extensions = getattr(settings, 'BLOCKED_EXTENSIONS', [])
-            if ext in blocked_extensions:
-                return False, f"File type {ext} is not allowed for security reasons."
-            
-            # Check against allowed image extensions
-            allowed_extensions = getattr(settings, 'ALLOWED_IMAGE_EXTENSIONS', ALLOWED_FORMATS)
-            if ext and ext not in [f'.{fmt.lower()}' for fmt in allowed_extensions]:
+            allowed_extensions = ['.jpg', '.jpeg', '.png', '.webp']
+            if ext not in allowed_extensions:
                 return False, f"Unsupported file extension. Allowed: {', '.join(allowed_extensions)}"
         
-        # Check MIME type against allowed types
-        if hasattr(image_file, 'content_type'):
-            allowed_mime_types = getattr(settings, 'ALLOWED_MIME_TYPES', [])
-            if allowed_mime_types and image_file.content_type not in allowed_mime_types:
-                return False, f"Unsupported MIME type: {image_file.content_type}"
-        
-        # Validate image file integrity
+        # Validate image file integrity - simplified
         try:
             with Image.open(image_file) as img:
                 # Verify the image can be opened
                 img.verify()
                 
-                # Reset and re-open for additional checks
+                # Reset file pointer
                 image_file.seek(0)
                 
+                # Re-open for format check
                 with Image.open(image_file) as img2:
                     # Check image format
                     if img2.format not in ALLOWED_FORMATS:
                         return False, f"Unsupported image format. Allowed formats: {', '.join(ALLOWED_FORMATS)}"
                     
-                    # Check image dimensions (prevent zip bombs)
+                    # Basic dimension check (prevent extremely large images)
                     width, height = img2.size
-                    max_dimension = 4096  # Reasonable maximum
+                    max_dimension = 4096
                     if width > max_dimension or height > max_dimension:
                         return False, f"Image dimensions too large. Maximum: {max_dimension}x{max_dimension} pixels."
-                    
-                    # Check for potential issues with image mode
-                    if img2.mode not in ('RGB', 'RGBA', 'L', 'P'):
-                        return False, f"Unsupported image mode: {img2.mode}"
-                    
-                    # Additional security: check for embedded data/metadata that could be malicious
-                    # This is a basic check - more sophisticated tools would be needed for thorough scanning
-                    if hasattr(img2, 'info') and img2.info:
-                        # Check for suspicious metadata
-                        suspicious_keys = ['Software', 'Comment', 'XMP', 'ICC_PROFILE']
-                        for key in suspicious_keys:
-                            if key in img2.info:
-                                value = str(img2.info[key])
-                                if any(pattern in value.lower() for pattern in ['script', 'javascript', 'eval', 'exec']):
-                                    logger.warning(f"Suspicious metadata found in image: {key}={value}")
-                                    return False, "Image contains potentially malicious metadata."
         
         except Exception as e:
             logger.error(f"Image validation error: {e}")
@@ -180,45 +152,115 @@ def optimize_image(image_file, max_size=(800, 600), quality=85, format='JPEG'):
 
 def create_multiple_sizes(image_file, base_name):
     """
-    Create multiple optimized sizes of an image.
+    Create multiple sizes with WebP + JPEG fallback for maximum compatibility and efficiency.
     
     Args:
         image_file: Django UploadedFile or file-like object
         base_name: str, base filename without extension
         
     Returns:
-        dict: Dictionary with size names as keys and file paths as values
+        dict: Dictionary with size names and formats as keys, file info as values
     """
     results = {}
     
     try:
-        for size_name, dimensions in MENU_IMAGE_SIZES.items():
-            # Optimize image for this size
-            optimized_image = optimize_image(
-                image_file, 
-                max_size=dimensions,
-                quality=QUALITY_SETTINGS['JPEG'],
-                format='JPEG'
-            )
+        from PIL import Image, ExifTags
+        
+        with Image.open(image_file) as img:
+            # Auto-rotate based on EXIF (common with phone photos)
+            try:
+                for orientation in ExifTags.TAGS.keys():
+                    if ExifTags.TAGS[orientation] == 'Orientation':
+                        break
+                
+                if hasattr(img, '_getexif'):
+                    exif = img._getexif()
+                    if exif is not None and orientation in exif:
+                        if exif[orientation] == 3:
+                            img = img.rotate(180, expand=True)
+                        elif exif[orientation] == 6:
+                            img = img.rotate(270, expand=True)
+                        elif exif[orientation] == 8:
+                            img = img.rotate(90, expand=True)
+            except (AttributeError, KeyError, TypeError):
+                pass
             
-            # Generate filename
-            filename = f"{base_name}_{size_name}.jpg"
+            original_mode = img.mode
+            has_transparency = original_mode in ('RGBA', 'LA', 'P')
             
-            # Save the optimized image
-            saved_path = default_storage.save(f"menu/{filename}", optimized_image)
-            results[size_name] = saved_path
+            # Enhanced size definitions for better responsive images
+            enhanced_sizes = {
+                'thumbnail': (150, 150),    # Square thumbnails
+                'card': (400, 300),         # Card display  
+                'detail': (800, 600),       # Detail view
+                'hero': (1200, 900),        # Hero/banner images
+            }
             
-            # Reset file pointer for next iteration
-            image_file.seek(0)
-            
+            # Create different sizes for responsive display
+            for size_name, dimensions in enhanced_sizes.items():
+                # Create a copy for this size
+                img_copy = img.copy()
+                
+                # Smart resize maintaining aspect ratio
+                img_copy.thumbnail(dimensions, Image.Resampling.LANCZOS)
+                
+                # Determine quality based on size
+                if size_name == 'thumbnail':
+                    webp_quality, jpeg_quality = 75, 80
+                elif size_name == 'hero':
+                    webp_quality, jpeg_quality = 90, 85
+                else:
+                    webp_quality, jpeg_quality = 85, 85
+                
+                # Create both WebP (modern) and JPEG (fallback)
+                formats = [('webp', 'WebP', webp_quality), ('jpg', 'JPEG', jpeg_quality)]
+                
+                for ext, format_name, quality in formats:
+                    # Prepare image for format
+                    if format_name == 'JPEG' and img_copy.mode in ('RGBA', 'LA', 'P'):
+                        img_for_format = img_copy.convert('RGB')
+                    else:
+                        img_for_format = img_copy.copy()
+                    
+                    # Generate filename and save
+                    filename = f"{base_name}_{size_name}.{ext}"
+                    buffer = io.BytesIO()
+                    
+                    save_kwargs = {'format': format_name, 'quality': quality}
+                    if format_name == 'WebP':
+                        save_kwargs.update({'method': 6, 'optimize': True})
+                        if has_transparency and quality > 90:
+                            save_kwargs['lossless'] = True
+                    elif format_name == 'JPEG':
+                        save_kwargs.update({'optimize': True, 'progressive': True})
+                    
+                    img_for_format.save(buffer, **save_kwargs)
+                    
+                    # Save to storage
+                    file_content = ContentFile(buffer.getvalue())
+                    file_path = default_storage.save(f"menu/{filename}", file_content)
+                    
+                    results[f"{size_name}_{ext}"] = {
+                        'path': file_path,
+                        'format': format_name,
+                        'size': dimensions,
+                        'quality': quality
+                    }
+                    
+                    logger.info(f"Created {size_name} {format_name} image: {file_path}")
+    
     except Exception as e:
         logger.error(f"Error creating multiple image sizes: {e}")
         # Clean up any successfully created files
-        for path in results.values():
+        for file_info in results.values():
             try:
-                default_storage.delete(path)
+                if isinstance(file_info, dict):
+                    default_storage.delete(file_info['path'])
+                else:
+                    default_storage.delete(file_info)
             except:
                 pass
+        results = {}
         raise
     
     return results

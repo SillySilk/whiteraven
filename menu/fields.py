@@ -34,7 +34,7 @@ class MenuImageField(models.ImageField):
     
     def pre_save(self, model_instance, add):
         """
-        Process image before saving to database.
+        Smart image processing with auto-conversion and resizing.
         """
         file = super().pre_save(model_instance, add)
         
@@ -48,18 +48,13 @@ class MenuImageField(models.ImageField):
                 if not is_valid:
                     raise ValidationError(error_message)
                 
-                # Optimize the main image
-                optimized_image = optimize_image(
-                    file._file,
-                    max_size=(800, 600),
-                    quality=85,
-                    format='JPEG'
-                )
+                # Smart optimization based on image characteristics
+                optimized_image = self._smart_optimize_image(file._file, original_name)
                 
                 # Replace the file content with optimized version
                 file._file = optimized_image
                 
-                # Update the name to have .jpg extension
+                # Always use JPG for maximum compatibility and simplicity
                 base_name = os.path.splitext(original_name)[0]
                 file.name = f"{base_name}.jpg"
                 
@@ -68,18 +63,124 @@ class MenuImageField(models.ImageField):
                 raise ValidationError(f"Error processing image: {e}")
         
         return file
+    
+    def _smart_optimize_image(self, image_file, original_name):
+        """
+        Smart image optimization with format conversion and intelligent resizing.
+        """
+        from PIL import Image, ExifTags
+        import io
+        from django.core.files.base import ContentFile
+        
+        # Open and analyze the image
+        with Image.open(image_file) as img:
+            # Auto-rotate based on EXIF data (common issue with phone photos)
+            try:
+                for orientation in ExifTags.TAGS.keys():
+                    if ExifTags.TAGS[orientation] == 'Orientation':
+                        break
+                
+                if hasattr(img, '_getexif'):
+                    exif = img._getexif()
+                    if exif is not None and orientation in exif:
+                        if exif[orientation] == 3:
+                            img = img.rotate(180, expand=True)
+                        elif exif[orientation] == 6:
+                            img = img.rotate(270, expand=True)
+                        elif exif[orientation] == 8:
+                            img = img.rotate(90, expand=True)
+            except (AttributeError, KeyError, TypeError):
+                pass  # No EXIF data or orientation info
+            
+            # Get original dimensions and file size estimate
+            original_width, original_height = img.size
+            original_mode = img.mode
+            
+            # Smart resizing logic based on image characteristics
+            max_width, max_height, quality = self._determine_optimal_size_and_quality(
+                original_width, original_height, original_name, image_file
+            )
+            
+            # Resize if needed (maintain aspect ratio)
+            if original_width > max_width or original_height > max_height:
+                img.thumbnail((max_width, max_height), Image.Resampling.LANCZOS)
+            
+            # Convert to RGB for JPG (no transparency support, but simpler)
+            if img.mode != 'RGB':
+                img = img.convert('RGB')
+            
+            # Save as JPG with optimal settings
+            output = io.BytesIO()
+            
+            # JPG settings for maximum compatibility and efficiency
+            jpg_options = {
+                'format': 'JPEG',
+                'quality': quality,
+                'optimize': True,
+                'progressive': True,  # Progressive loading
+            }
+            
+            img.save(output, **jpg_options)
+            output.seek(0)
+            
+            return ContentFile(output.getvalue())
+    
+    def _determine_optimal_size_and_quality(self, width, height, filename, file_obj):
+        """
+        Determine optimal size and quality based on image source and characteristics.
+        """
+        # Estimate if this is likely a phone photo (very large dimensions)
+        is_likely_phone_photo = width > 2000 or height > 2000
+        
+        # Estimate if this is likely an AI-generated image (specific aspect ratios, moderate size)
+        is_likely_ai_image = (
+            (width == height) or  # Square (common AI output)
+            (abs(width/height - 16/9) < 0.1) or  # 16:9 aspect ratio
+            (abs(width/height - 4/3) < 0.1)   # 4:3 aspect ratio
+        ) and width >= 512
+        
+        # Get file size estimate
+        file_size = getattr(file_obj, 'size', 0) if hasattr(file_obj, 'size') else 0
+        is_large_file = file_size > 1024 * 1024  # > 1MB
+        
+        # Smart sizing decisions
+        if is_likely_phone_photo or is_large_file:
+            # Aggressive resizing for phone photos and large files
+            max_width = 800
+            max_height = 600
+            quality = 80  # Good quality, smaller file
+            
+        elif is_likely_ai_image:
+            # Moderate resizing for AI images, maintain quality
+            max_width = 1000
+            max_height = 800
+            quality = 85  # Higher quality for AI-generated content
+            
+        elif width <= 800 and height <= 600:
+            # Small images - minimal processing
+            max_width = width
+            max_height = height
+            quality = 90  # High quality for already small images
+            
+        else:
+            # Default case - moderate optimization
+            max_width = 1000
+            max_height = 800
+            quality = 85
+        
+        return max_width, max_height, quality
 
 
 class MenuImageFormField(forms.ImageField):
     """
-    Custom form field for menu item image uploads with enhanced validation.
+    Custom form field for menu item image uploads with JPG conversion.
     """
     
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('help_text', 
-            'Upload a high-quality image of your menu item. '
-            'Supported formats: JPEG, PNG, WebP. Maximum size: 5MB. '
-            'Images will be automatically optimized for web display.'
+            'Upload an image of your menu item. All images will be automatically '
+            'converted to optimized JPG format for fast loading. '
+            'File picker shows JPG files only, but PNG/WebP are also accepted and will be converted. Maximum size: 5MB.'
         )
         
         super().__init__(*args, **kwargs)
@@ -104,7 +205,7 @@ class MenuImageFormField(forms.ImageField):
         """
         attrs = super().widget_attrs(widget)
         attrs.update({
-            'accept': 'image/jpeg,image/png,image/webp',
+            'accept': 'image/jpeg,image/jpg',  # Only JPG files in file picker
             'capture': 'camera',  # Allow camera capture on mobile
         })
         return attrs
@@ -119,7 +220,7 @@ class MenuImageWidget(forms.ClearableFileInput):
     
     def __init__(self, attrs=None):
         default_attrs = {
-            'accept': 'image/jpeg,image/png,image/webp',
+            'accept': 'image/jpeg,image/jpg',  # Only JPG files in file picker
             'class': 'form-control menu-image-input'
         }
         if attrs:

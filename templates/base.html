@@ -29,6 +29,67 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
     
+    <!-- Admin Theme Colors Integration -->
+    <style>
+        :root {
+            /* Admin theme colors available in all templates */
+            --primary-color: {{ theme_colors.primary }};
+            --primary-text: {{ theme_colors.primary_text }};
+            --primary-light: {{ theme_colors.primary_light }};
+            --content-bg: {{ theme_colors.content_bg }};
+            --content-text: {{ theme_colors.content_text }};
+            --content-selected: {{ theme_colors.content_selected }};
+            --link-color: {{ theme_colors.link_color }};
+            --link-hover: {{ theme_colors.link_hover }};
+            --link-active: {{ theme_colors.link_active }};
+            --button-bg: {{ theme_colors.button_bg }};
+            --button-bg-hover: {{ theme_colors.button_bg_hover }};
+            --button-text: {{ theme_colors.button_text }};
+        }
+        
+        /* Apply admin theme colors to public website */
+        .navbar-dark {
+            background-color: var(--primary-color) !important;
+        }
+        
+        .navbar-dark .navbar-brand,
+        .navbar-dark .navbar-nav .nav-link {
+            color: var(--primary-text) !important;
+        }
+        
+        .navbar-dark .navbar-nav .nav-link:hover {
+            color: var(--primary-light) !important;
+        }
+        
+        .btn-primary {
+            background-color: var(--button-bg);
+            border-color: var(--button-bg);
+            color: var(--button-text);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--button-bg-hover);
+            border-color: var(--button-bg-hover);
+        }
+        
+        a {
+            color: var(--link-color);
+        }
+        
+        a:hover {
+            color: var(--link-hover);
+        }
+        
+        /* Fix any readability issues */
+        body {
+            color: var(--content-text);
+        }
+        
+        .text-muted {
+            color: #6c757d !important; /* Keep Bootstrap's muted color */
+        }
+    </style>
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     
