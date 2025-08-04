@@ -162,9 +162,10 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-# Production static files configuration for PythonAnywhere
+# Production static files configuration
 if os.environ.get('PRODUCTION') == 'True':
-    STATIC_ROOT = os.environ.get('STATIC_ROOT', '/home/username/static/')
+    # Use Render-compatible static files path
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 else:
     STATIC_ROOT = BASE_DIR / "staticfiles"
 
@@ -172,7 +173,8 @@ else:
 # Media files configuration
 MEDIA_URL = "/media/"
 if os.environ.get('PRODUCTION') == 'True':
-    MEDIA_ROOT = os.environ.get('MEDIA_ROOT', '/home/username/media/')
+    # Use Render-compatible media files path
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 else:
     MEDIA_ROOT = BASE_DIR / "media"
 
