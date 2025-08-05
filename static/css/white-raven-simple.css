@@ -13,6 +13,11 @@ without interfering with existing Bootstrap functionality.
     --gold-dark: #ff8f00;           /* Gold hover state */
 }
 
+/* TEST: Change body background to coffee color to verify CSS is loading */
+body {
+    background-color: #f4f1e8 !important;  /* Light coffee/cream background instead of white */
+}
+
 /* Navigation - Override Bootstrap navbar-dark */
 .navbar.navbar-dark {
     background-color: var(--coffee-dark) !important;
