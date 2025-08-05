@@ -58,6 +58,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -166,6 +167,8 @@ STATICFILES_DIRS = [
 if os.environ.get('PRODUCTION') == 'True':
     # Use Render-compatible static files path
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    # WhiteNoise static file serving for production
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 else:
     STATIC_ROOT = BASE_DIR / "staticfiles"
 
