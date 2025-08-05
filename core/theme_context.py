@@ -112,7 +112,7 @@ def business_info(request):
         business = BusinessInfo.objects.first()
         if business:
             return {
-                'business': business
+                'business_info': business
             }
     except Exception:
         pass

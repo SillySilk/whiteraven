@@ -1,0 +1,238 @@
+/* White Raven Pourhouse - Dynamic Theme Integration CSS */
+
+/* This CSS file works with the SiteTheme system to apply colors dynamically */
+
+/* Base body styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--theme-text, #2c3e50);
+    background-color: var(--theme-bg, #ffffff);
+    font-size: 16px;
+}
+
+/* Navigation styling with theme colors */
+.navbar {
+    background-color: var(--theme-navbar-bg, #2c3e50) !important;
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+    color: var(--theme-navbar-text, #ffffff) !important;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: var(--theme-navbar-hover, #d4af37) !important;
+}
+
+/* Button styling with theme colors */
+.btn-primary {
+    background-color: var(--theme-btn-primary-bg, #6f4f28) !important;
+    border-color: var(--theme-btn-primary-bg, #6f4f28) !important;
+    color: var(--theme-btn-primary-text, #ffffff) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--theme-secondary, #8b7355) !important;
+    border-color: var(--theme-secondary, #8b7355) !important;
+    color: var(--theme-btn-primary-text, #ffffff) !important;
+}
+
+.btn-secondary {
+    background-color: var(--theme-btn-secondary-bg, #8b7355) !important;
+    border-color: var(--theme-btn-secondary-bg, #8b7355) !important;
+    color: var(--theme-btn-secondary-text, #ffffff) !important;
+}
+
+/* Link styling */
+a {
+    color: var(--theme-primary, #6f4f28) !important;
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--theme-secondary, #8b7355) !important;
+    text-decoration: underline;
+}
+
+/* Text color classes */
+.text-primary {
+    color: var(--theme-primary, #6f4f28) !important;
+}
+
+.bg-primary {
+    background-color: var(--theme-primary, #6f4f28) !important;
+    color: var(--theme-btn-primary-text, #ffffff) !important;
+}
+
+/* Hero section */
+.hero-section {
+    background: linear-gradient(135deg, var(--theme-primary, #6f4f28) 0%, var(--theme-secondary, #8b7355) 100%);
+    color: var(--theme-btn-primary-text, #ffffff);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.hero-content h1 {
+    color: var(--theme-btn-primary-text, #ffffff) !important;
+    font-size: 3.5rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    margin-bottom: 1rem;
+}
+
+.hero-content .tagline {
+    color: var(--theme-accent, #d4af37) !important;
+    font-size: 1.5rem;
+    font-style: italic;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    margin-bottom: 2rem;
+}
+
+/* Cards */
+.card {
+    background-color: var(--theme-bg, #ffffff);
+    color: var(--theme-text, #2c3e50);
+    border: 1px solid var(--theme-bg-secondary, #f8f9fa);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-title {
+    color: var(--theme-text, #2c3e50) !important;
+    font-weight: 600;
+}
+
+.card-text {
+    color: var(--theme-text-light, #6c757d) !important;
+}
+
+/* Footer */
+.footer {
+    background-color: var(--theme-footer-bg, #2c3e50) !important;
+    color: var(--theme-footer-text, #ffffff) !important;
+}
+
+.footer h5 {
+    color: var(--theme-footer-link, #d4af37) !important;
+    font-weight: 600;
+}
+
+.footer a {
+    color: var(--theme-footer-text, #ffffff) !important;
+}
+
+.footer a:hover {
+    color: var(--theme-footer-link, #d4af37) !important;
+    transition: color 0.3s ease;
+}
+
+/* Form controls */
+.form-control:focus {
+    border-color: var(--theme-primary, #6f4f28);
+    box-shadow: 0 0 0 0.2rem rgba(111, 78, 55, 0.25);
+}
+
+/* Badges */
+.badge.bg-primary {
+    background-color: var(--theme-primary, #6f4f28) !important;
+    color: var(--theme-btn-primary-text, #ffffff) !important;
+}
+
+.price-badge {
+    background-color: var(--theme-primary, #6f4f28);
+    color: var(--theme-btn-primary-text, #ffffff);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Menu category filters */
+.category-filter .btn.active {
+    background-color: var(--theme-primary, #6f4f28) !important;
+    border-color: var(--theme-primary, #6f4f28) !important;
+    color: var(--theme-btn-primary-text, #ffffff) !important;
+}
+
+/* Alert styling */
+.alert {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Section titles */
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--theme-primary, #6f4f28);
+    margin-bottom: 3rem;
+    text-align: center;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: var(--theme-accent, #d4af37);
+    margin: 1rem auto;
+    border-radius: 2px;
+}
+
+/* Social media icons */
+.social-icons a {
+    display: inline-block;
+    margin: 0 0.5rem;
+    padding: 0.5rem;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+    background-color: var(--theme-primary, #6f4f28);
+    transform: translateY(-3px);
+}
+
+/* Hours display */
+.hours-display {
+    background-color: var(--theme-bg-secondary, #f8f9fa);
+    border-left: 4px solid var(--theme-primary, #6f4f28);
+    padding: 1rem;
+    border-radius: 0 5px 5px 0;
+}
+
+/* Status indicators */
+.status-open {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.status-closed {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-content .tagline {
+        font-size: 1.2rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+}
