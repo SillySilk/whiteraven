@@ -58,7 +58,8 @@
       "WebFetch(domain:render.com)",
       "WebFetch(domain:modelcontextprotocol.io)",
       "Bash(npm install:*)",
-      "Bash(touch:*)"
+      "Bash(touch:*)",
+      "WebFetch(domain:docs.djangoproject.com)"
     ],
     "deny": []
   }

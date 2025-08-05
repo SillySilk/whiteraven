@@ -3,47 +3,30 @@
 <html lang="en" class="h-100">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="{% block meta_description %}{% if business_info %}{{ business_info.meta_description }}{% else %}White Raven Pourhouse - The Best Little Pour House in Felton. Serving exceptional coffee and creating memorable experiences in Felton, CA.{% endif %}{% endblock %}">
-    <meta name="author" content="White Raven Pourhouse">
     
-    <!-- Mobile optimization meta tags -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="White Raven Pourhouse">
-    <meta name="theme-color" content="#6F4E37">
-    <meta name="msapplication-TileColor" content="#6F4E37">
-    
-    <!-- Preconnect to external domains for better performance -->
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-    
-    <!-- Page Title -->
     <title>{% block title %}White Raven Pourhouse - The Best Little Pour House in Felton{% endblock %}</title>
     
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap CSS from local CDN alternative if needed, or use downloaded version -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
 
-    <!-- Custom CSS - MUST come after Bootstrap -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/theme-dynamic.css' %}">
-    <link rel="stylesheet" href="{% static 'css/theme-override.css' %}">
+    <!-- White Raven Unified CSS - Comprehensive styling system -->
+    <link rel="stylesheet" href="{% static 'css/white-raven-unified.css' %}">
     
-    <!-- Site Theme Colors Integration -->
+    <!-- Theme Integration -->
     <style>
         :root {
             {% if site_theme_vars %}
-                /* Site theme CSS variables */
+                /* Dynamic theme colors from database */
                 {% for var_name, var_value in site_theme_vars.items %}
                 {{ var_name }}: {{ var_value }};
                 {% endfor %}
             {% else %}
-                /* Fallback theme colors */
+                /* Fallback White Raven coffee colors */
                 --theme-primary: #6f4f28;
                 --theme-secondary: #8b7355;
                 --theme-accent: #d4af37;
@@ -51,9 +34,9 @@
                 --theme-text-light: #6c757d;
                 --theme-bg: #ffffff;
                 --theme-bg-secondary: #f8f9fa;
-                --theme-navbar-bg: #ffffff;
-                --theme-navbar-text: #2c3e50;
-                --theme-navbar-hover: #6f4f28;
+                --theme-navbar-bg: #2c3e50;
+                --theme-navbar-text: #ffffff;
+                --theme-navbar-hover: #d4af37;
                 --theme-btn-primary-bg: #6f4f28;
                 --theme-btn-primary-text: #ffffff;
                 --theme-btn-secondary-bg: #8b7355;
@@ -62,124 +45,18 @@
                 --theme-footer-text: #ffffff;
                 --theme-footer-link: #d4af37;
             {% endif %}
-            
-            /* Legacy admin theme colors for backward compatibility */
-            --primary-color: {{ theme_colors.primary }};
-            --primary-text: {{ theme_colors.primary_text }};
-            --link-color: {{ theme_colors.link_color }};
-            --link-hover: {{ theme_colors.link_hover }};
-            --button-bg: {{ theme_colors.button_bg }};
-            --button-text: {{ theme_colors.button_text }};
-        }
-        
-        /* Apply theme colors to public website */
-        .navbar {
-            background-color: var(--theme-navbar-bg) !important;
-            color: var(--theme-navbar-text) !important;
-        }
-        
-        .navbar-nav .nav-link {
-            color: var(--theme-navbar-text) !important;
-        }
-        
-        .navbar-nav .nav-link:hover {
-            color: var(--theme-navbar-hover) !important;
-        }
-        
-        .btn-primary {
-            background-color: var(--theme-btn-primary-bg) !important;
-            border-color: var(--theme-btn-primary-bg) !important;
-            color: var(--theme-btn-primary-text) !important;
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--theme-secondary) !important;
-            border-color: var(--theme-secondary) !important;
-        }
-        
-        .btn-secondary {
-            background-color: var(--theme-btn-secondary-bg) !important;
-            border-color: var(--theme-btn-secondary-bg) !important;
-            color: var(--theme-btn-secondary-text) !important;
-        }
-        
-        a {
-            color: var(--theme-primary) !important;
-        }
-        
-        a:hover {
-            color: var(--theme-secondary) !important;
-        }
-        
-        .text-primary {
-            color: var(--theme-primary) !important;
-        }
-        
-        .bg-primary {
-            background-color: var(--theme-primary) !important;
-        }
-        
-        .menu-decoration-image {
-            transition: transform 0.3s ease;
-        }
-        
-        .menu-decoration-image:hover {
-            transform: scale(1.02);
-        }
-        
-        /* Legacy admin theme colors for backward compatibility */
-        .legacy-navbar-dark {
-            background-color: var(--primary-color) !important;
-        }
-        
-        .navbar-dark .navbar-brand,
-        .navbar-dark .navbar-nav .nav-link {
-            color: var(--primary-text) !important;
-        }
-        
-        .navbar-dark .navbar-nav .nav-link:hover {
-            color: var(--primary-light) !important;
-        }
-        
-        .btn-primary {
-            background-color: var(--button-bg);
-            border-color: var(--button-bg);
-            color: var(--button-text);
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--button-bg-hover);
-            border-color: var(--button-bg-hover);
-        }
-        
-        a {
-            color: var(--link-color);
-        }
-        
-        a:hover {
-            color: var(--link-hover);
-        }
-        
-        /* Fix any readability issues */
-        body {
-            color: var(--content-text);
-        }
-        
-        .text-muted {
-            color: #6c757d !important; /* Keep Bootstrap's muted color */
         }
     </style>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
-    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
     
     {% block extra_css %}{% endblock %}
 </head>
 
 <body class="d-flex flex-column h-100">
+    <!-- Skip to main content for accessibility -->
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
             <!-- Brand -->
             <a class="navbar-brand fw-bold" href="{% url 'core:home' %}">
@@ -254,13 +131,13 @@
     {% endif %}
 
     <!-- Page Content -->
-    <main class="flex-shrink-0">
+    <main class="flex-shrink-0" id="main-content">
         {% block content %}
         {% endblock %}
     </main>
 
     <!-- Footer -->
-    <footer class="footer mt-auto py-4 bg-dark text-light">
+    <footer class="footer mt-auto py-4">
         <div class="container">
             <div class="row">
                 <!-- Business Info -->
@@ -279,11 +156,11 @@
                     </p>
                     <p class="mb-1">
                         <i class="bi bi-telephone me-2"></i>
-                        <a href="tel:{{ business_info.phone }}" class="text-light text-decoration-none">{{ business_info.phone }}</a>
+                        <a href="tel:{{ business_info.phone }}">{{ business_info.phone }}</a>
                     </p>
                     <p class="mb-0">
                         <i class="bi bi-envelope me-2"></i>
-                        <a href="mailto:{{ business_info.email }}" class="text-light text-decoration-none">{{ business_info.email }}</a>
+                        <a href="mailto:{{ business_info.email }}">{{ business_info.email }}</a>
                     </p>
                     {% else %}
                     <p class="mb-1">
@@ -292,11 +169,11 @@
                     </p>
                     <p class="mb-1">
                         <i class="bi bi-telephone me-2"></i>
-                        <a href="tel:+1-555-0123" class="text-light text-decoration-none">(555) 012-3456</a>
+                        <a href="tel:+1-555-0123">(555) 012-3456</a>
                     </p>
                     <p class="mb-0">
                         <i class="bi bi-envelope me-2"></i>
-                        <a href="mailto:info@whiteravenpourhouse.com" class="text-light text-decoration-none">info@whiteravenpourhouse.com</a>
+                        <a href="mailto:info@whiteravenpourhouse.com">info@whiteravenpourhouse.com</a>
                     </p>
                     {% endif %}
                 </div>
@@ -306,27 +183,27 @@
                     <h5 class="mb-3">Quick Links</h5>
                     <ul class="list-unstyled">
                         <li class="mb-2">
-                            <a href="{% url 'core:home' %}" class="text-light text-decoration-none">
+                            <a href="{% url 'core:home' %}">
                                 <i class="bi bi-chevron-right me-2"></i>Home
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="{% url 'menu:menu_list' %}" class="text-light text-decoration-none">
+                            <a href="{% url 'menu:menu_list' %}">
                                 <i class="bi bi-chevron-right me-2"></i>Our Menu
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="{% url 'core:location' %}" class="text-light text-decoration-none">
+                            <a href="{% url 'core:location' %}">
                                 <i class="bi bi-chevron-right me-2"></i>Location & Hours
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="{% url 'core:about' %}" class="text-light text-decoration-none">
+                            <a href="{% url 'core:about' %}">
                                 <i class="bi bi-chevron-right me-2"></i>About Us
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="{% url 'core:contact' %}" class="text-light text-decoration-none">
+                            <a href="{% url 'core:contact' %}">
                                 <i class="bi bi-chevron-right me-2"></i>Contact Us
                             </a>
                         </li>
@@ -336,32 +213,35 @@
                 <!-- Social Media & Hours -->
                 <div class="col-md-4 mb-3">
                     <h5 class="mb-3">Connect With Us</h5>
-                    <div class="mb-3">
+                    <div class="social-icons mb-3">
                         {% if business_info and business_info.instagram_url %}
-                        <a href="{{ business_info.instagram_url }}" target="_blank" class="text-light text-decoration-none me-3">
+                        <a href="{{ business_info.instagram_url }}" target="_blank" aria-label="Instagram">
                             <i class="bi bi-instagram fs-4"></i>
                         </a>
                         {% endif %}
                         {% if business_info and business_info.facebook_url %}
-                        <a href="{{ business_info.facebook_url }}" target="_blank" class="text-light text-decoration-none me-3">
+                        <a href="{{ business_info.facebook_url }}" target="_blank" aria-label="Facebook">
                             <i class="bi bi-facebook fs-4"></i>
                         </a>
                         {% endif %}
                         {% if business_info %}
-                        <a href="mailto:{{ business_info.email }}" class="text-light text-decoration-none">
+                        <a href="mailto:{{ business_info.email }}" aria-label="Email">
                             <i class="bi bi-envelope fs-4"></i>
                         </a>
                         {% else %}
-                        <a href="mailto:info@whiteravenpourhouse.com" class="text-light text-decoration-none">
+                        <a href="mailto:info@whiteravenpourhouse.com" aria-label="Email">
                             <i class="bi bi-envelope fs-4"></i>
                         </a>
                         {% endif %}
                     </div>
-                    <h6 class="mb-2">Hours</h6>
-                    <small class="text-muted">
-                        <div>Mon-Fri: 6:00 AM - 6:00 PM</div>
-                        <div>Sat-Sun: 7:00 AM - 5:00 PM</div>
-                    </small>
+                    
+                    <div class="hours-display">
+                        <h6 class="mb-2">Hours</h6>
+                        <small>
+                            <div>Mon-Fri: 6:00 AM - 6:00 PM</div>
+                            <div>Sat-Sun: 7:00 AM - 5:00 PM</div>
+                        </small>
+                    </div>
                 </div>
             </div>
 
@@ -369,12 +249,12 @@
             <hr class="my-4">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <p class="mb-0 text-muted small">
+                    <p class="mb-0 small">
                         &copy; {% now "Y" %} {% if business_info %}{{ business_info.copyright_text }}{% else %}White Raven Pourhouse{% endif %}. All rights reserved.
                     </p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <p class="mb-0 text-muted small">
+                    <p class="mb-0 small">
                         {% if business_info %}{{ business_info.footer_tagline }}{% else %}Made with <i class="bi bi-heart-fill text-danger"></i> in Felton, CA{% endif %}
                     </p>
                 </div>
@@ -387,11 +267,6 @@
     
     <!-- Custom JavaScript -->
     <script src="{% static 'js/main.js' %}"></script>
-    
-    <!-- Browser Compatibility Testing (Development Only) -->
-    {% if debug %}
-    <script src="{% static 'js/browser-test.js' %}"></script>
-    {% endif %}
     
     {% block extra_js %}{% endblock %}
 </body>

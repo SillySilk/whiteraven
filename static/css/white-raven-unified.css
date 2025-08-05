@@ -1,0 +1,812 @@
+/* 
+White Raven Pourhouse - Unified Theme CSS
+This file provides comprehensive, cohesive styling for the coffee shop website
+with proper contrast ratios and accessibility considerations.
+*/
+
+/* ==========================================================================
+   1. CSS CUSTOM PROPERTIES (VARIABLES)
+   ========================================================================== */
+
+:root {
+    /* Core Coffee Theme Colors with High Contrast */
+    --wr-coffee-dark: #3e2723;        /* Rich dark brown - primary navigation/footer */
+    --wr-coffee-primary: #5d4037;      /* Medium brown - main brand color */
+    --wr-coffee-medium: #6d4c41;       /* Warm brown - buttons and accents */
+    --wr-coffee-light: #8d6e63;        /* Light brown - hover states */
+    --wr-coffee-cream: #efebe9;        /* Very light cream - backgrounds */
+    
+    /* Accent Colors */
+    --wr-gold: #ffc107;                /* Gold - premium accents */
+    --wr-gold-dark: #ff8f00;          /* Darker gold - hover states */
+    --wr-orange: #ff5722;              /* Warm orange - call-to-action */
+    
+    /* Neutral Colors with Proper Contrast */
+    --wr-white: #ffffff;               /* Pure white */
+    --wr-off-white: #fafafa;           /* Slightly off-white */
+    --wr-light-gray: #f5f5f5;          /* Light background */
+    --wr-medium-gray: #9e9e9e;         /* Medium gray for less important text */
+    --wr-dark-gray: #424242;           /* Dark gray for readable text */
+    --wr-charcoal: #212121;            /* Near-black for high contrast text */
+    
+    /* Status Colors */
+    --wr-success: #2e7d32;             /* Green - success states */
+    --wr-warning: #f57c00;             /* Orange - warning states */
+    --wr-error: #c62828;               /* Red - error states */
+    --wr-info: #1976d2;                /* Blue - info states */
+    
+    /* Semantic Color Assignments */
+    --theme-primary: var(--wr-coffee-primary);
+    --theme-secondary: var(--wr-coffee-medium);
+    --theme-accent: var(--wr-gold);
+    
+    /* Text Colors */
+    --theme-text: var(--wr-charcoal);
+    --theme-text-light: var(--wr-dark-gray);
+    --theme-text-muted: var(--wr-medium-gray);
+    --theme-text-inverse: var(--wr-white);
+    --theme-text-on-primary: var(--wr-white);
+    
+    /* Background Colors */
+    --theme-bg: var(--wr-white);
+    --theme-bg-secondary: var(--wr-light-gray);
+    --theme-bg-accent: var(--wr-coffee-cream);
+    
+    /* Navigation Colors */
+    --theme-navbar-bg: var(--wr-coffee-dark);
+    --theme-navbar-text: var(--wr-white);
+    --theme-navbar-hover: var(--wr-gold);
+    --theme-navbar-active: var(--wr-gold);
+    
+    /* Button Colors */
+    --theme-btn-primary-bg: var(--wr-coffee-primary);
+    --theme-btn-primary-text: var(--wr-white);
+    --theme-btn-primary-hover: var(--wr-coffee-medium);
+    
+    --theme-btn-secondary-bg: var(--wr-coffee-light);
+    --theme-btn-secondary-text: var(--wr-white);
+    --theme-btn-secondary-hover: var(--wr-coffee-medium);
+    
+    --theme-btn-accent-bg: var(--wr-gold);
+    --theme-btn-accent-text: var(--wr-charcoal);
+    --theme-btn-accent-hover: var(--wr-gold-dark);
+    
+    /* Footer Colors */
+    --theme-footer-bg: var(--wr-coffee-dark);
+    --theme-footer-text: var(--wr-white);
+    --theme-footer-link: var(--wr-gold);
+    --theme-footer-link-hover: var(--wr-gold-dark);
+    
+    /* Border and Shadow Colors */
+    --theme-border: #e0e0e0;
+    --theme-border-dark: #bdbdbd;
+    --theme-shadow: rgba(0, 0, 0, 0.1);
+    --theme-shadow-strong: rgba(0, 0, 0, 0.2);
+}
+
+/* ==========================================================================
+   2. GLOBAL TYPOGRAPHY AND BASE STYLES
+   ========================================================================== */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--theme-text);
+    background-color: var(--theme-bg);
+    font-size: 16px;
+    font-weight: 400;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--theme-text);
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+/* Links */
+a {
+    color: var(--theme-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover,
+a:focus {
+    color: var(--theme-secondary);
+    text-decoration: underline;
+}
+
+a:focus {
+    outline: 2px solid var(--wr-gold);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   3. NAVIGATION STYLING
+   ========================================================================== */
+
+.navbar {
+    background-color: var(--theme-navbar-bg) !important;
+    box-shadow: 0 2px 4px var(--theme-shadow);
+    padding: 0.75rem 0;
+}
+
+.navbar-brand {
+    color: var(--theme-navbar-text) !important;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+.navbar-brand:hover,
+.navbar-brand:focus {
+    color: var(--theme-navbar-hover) !important;
+}
+
+.navbar-nav .nav-link {
+    color: var(--theme-navbar-text) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    border-radius: 0.375rem;
+    margin: 0 0.25rem;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus {
+    color: var(--theme-navbar-hover) !important;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-nav .nav-link.active {
+    color: var(--theme-navbar-active) !important;
+    background-color: rgba(255, 193, 7, 0.1);
+    font-weight: 600;
+}
+
+/* Mobile Navigation */
+.navbar-toggler {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.5rem;
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 2px var(--wr-gold);
+}
+
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        background-color: rgba(62, 39, 35, 0.95);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-top: 0.5rem;
+        backdrop-filter: blur(10px);
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    .navbar-nav .nav-link:last-child {
+        border-bottom: none;
+    }
+}
+
+/* ==========================================================================
+   4. BUTTON STYLING
+   ========================================================================== */
+
+.btn {
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    border-width: 2px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+/* Primary Button */
+.btn-primary {
+    background-color: var(--theme-btn-primary-bg);
+    border-color: var(--theme-btn-primary-bg);
+    color: var(--theme-btn-primary-text);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--theme-btn-primary-hover);
+    border-color: var(--theme-btn-primary-hover);
+    color: var(--theme-btn-primary-text);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--theme-shadow-strong);
+}
+
+/* Secondary Button */
+.btn-secondary {
+    background-color: var(--theme-btn-secondary-bg);
+    border-color: var(--theme-btn-secondary-bg);
+    color: var(--theme-btn-secondary-text);
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+    background-color: var(--theme-btn-secondary-hover);
+    border-color: var(--theme-btn-secondary-hover);
+    color: var(--theme-btn-secondary-text);
+}
+
+/* Outline Buttons */
+.btn-outline-primary {
+    color: var(--theme-btn-primary-bg);
+    border-color: var(--theme-btn-primary-bg);
+    background-color: transparent;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    background-color: var(--theme-btn-primary-bg);
+    border-color: var(--theme-btn-primary-bg);
+    color: var(--theme-btn-primary-text);
+    transform: translateY(-2px);
+}
+
+/* Coffee-specific button classes */
+.btn-coffee {
+    background-color: var(--theme-btn-primary-bg);
+    border-color: var(--theme-btn-primary-bg);
+    color: var(--theme-btn-primary-text);
+}
+
+.btn-coffee:hover,
+.btn-coffee:focus {
+    background-color: var(--theme-btn-primary-hover);
+    border-color: var(--theme-btn-primary-hover);
+    color: var(--theme-btn-primary-text);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--theme-shadow-strong);
+}
+
+.btn-gold {
+    background-color: var(--theme-btn-accent-bg);
+    border-color: var(--theme-btn-accent-bg);
+    color: var(--theme-btn-accent-text);
+    font-weight: 700;
+}
+
+.btn-gold:hover,
+.btn-gold:focus {
+    background-color: var(--theme-btn-accent-hover);
+    border-color: var(--theme-btn-accent-hover);
+    color: var(--theme-btn-accent-text);
+    transform: translateY(-2px);
+}
+
+/* Button Focus States */
+.btn:focus {
+    outline: 3px solid var(--wr-gold);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   5. HERO SECTION
+   ========================================================================== */
+
+.hero-section {
+    background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+    color: var(--theme-text-inverse);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+
+.hero-content h1 {
+    color: var(--theme-text-inverse);
+    font-size: 3.5rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    margin-bottom: 1rem;
+}
+
+.hero-content .tagline,
+.hero-tagline {
+    color: var(--theme-accent);
+    font-size: 1.5rem;
+    font-style: italic;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    margin-bottom: 2rem;
+}
+
+.hero-content .lead,
+.hero-content p {
+    color: var(--theme-text-inverse);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    font-size: 1.1rem;
+}
+
+/* ==========================================================================
+   6. CARD STYLING
+   ========================================================================== */
+
+.card {
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
+    border: 1px solid var(--theme-border);
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 8px var(--theme-shadow);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px var(--theme-shadow-strong);
+}
+
+.card-title {
+    color: var(--theme-text);
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.card-text {
+    color: var(--theme-text-light);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    width: 100%;
+}
+
+/* Menu Item Cards */
+.menu-item-card {
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.menu-item-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px var(--theme-shadow-strong);
+}
+
+.menu-card-image {
+    transition: transform 0.3s ease;
+}
+
+.menu-item-card:hover .menu-card-image {
+    transform: scale(1.05);
+}
+
+/* ==========================================================================
+   7. BADGES AND LABELS
+   ========================================================================== */
+
+.badge {
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+}
+
+.badge.bg-primary {
+    background-color: var(--theme-primary) !important;
+    color: var(--theme-text-on-primary) !important;
+    border-color: var(--theme-secondary);
+}
+
+.badge.bg-success {
+    background-color: var(--wr-success) !important;
+    color: var(--wr-white) !important;
+}
+
+.badge.bg-warning {
+    background-color: var(--wr-warning) !important;
+    color: var(--wr-white) !important;
+}
+
+.badge.bg-info {
+    background-color: var(--wr-info) !important;
+    color: var(--wr-white) !important;
+}
+
+.price-badge {
+    background-color: var(--theme-primary);
+    color: var(--theme-text-on-primary);
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+}
+
+/* ==========================================================================
+   8. FORMS
+   ========================================================================== */
+
+.form-control {
+    border: 2px solid var(--theme-border);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    color: var(--theme-text);
+    background-color: var(--theme-bg);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--theme-primary);
+    box-shadow: 0 0 0 0.2rem rgba(93, 64, 55, 0.25);
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: var(--theme-text-muted);
+    opacity: 1;
+}
+
+.form-label {
+    color: var(--theme-text);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+/* ==========================================================================
+   9. ALERTS
+   ========================================================================== */
+
+.alert {
+    border: 2px solid transparent;
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px var(--theme-shadow);
+    font-weight: 500;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: var(--wr-success);
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-color: var(--wr-warning);
+}
+
+.alert-danger,
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: var(--wr-error);
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-color: var(--wr-info);
+}
+
+/* ==========================================================================
+   10. FOOTER
+   ========================================================================== */
+
+.footer {
+    background-color: var(--theme-footer-bg) !important;
+    color: var(--theme-footer-text) !important;
+    padding: 3rem 0 1rem;
+    margin-top: auto;
+}
+
+.footer h5,
+.footer h6 {
+    color: var(--theme-footer-link) !important;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.footer a {
+    color: var(--theme-footer-text) !important;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer a:hover,
+.footer a:focus {
+    color: var(--theme-footer-link-hover) !important;
+    text-decoration: underline;
+}
+
+.footer .social-icons a {
+    display: inline-block;
+    margin: 0 0.5rem;
+    padding: 0.75rem;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.footer .social-icons a:hover {
+    background-color: var(--theme-footer-link);
+    color: var(--theme-text) !important;
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.hours-display {
+    background-color: var(--theme-bg-accent);
+    border-left: 4px solid var(--theme-footer-link);
+    padding: 1rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+    color: var(--theme-text);
+}
+
+/* ==========================================================================
+   11. UTILITY CLASSES
+   ========================================================================== */
+
+/* Text Colors */
+.text-primary { color: var(--theme-primary) !important; }
+.text-secondary { color: var(--theme-secondary) !important; }
+.text-muted { color: var(--theme-text-muted) !important; }
+.text-coffee { color: var(--theme-primary) !important; }
+.text-gold { color: var(--wr-gold) !important; }
+
+/* Background Colors */
+.bg-primary { 
+    background-color: var(--theme-primary) !important; 
+    color: var(--theme-text-on-primary) !important; 
+}
+.bg-coffee { 
+    background-color: var(--theme-primary) !important; 
+    color: var(--theme-text-on-primary) !important; 
+}
+.bg-cream { 
+    background-color: var(--wr-coffee-cream) !important; 
+    color: var(--theme-text) !important; 
+}
+.bg-light-coffee { 
+    background-color: var(--wr-coffee-light) !important; 
+    color: var(--theme-text-inverse) !important; 
+}
+
+/* Section Styling */
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--theme-primary);
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: var(--theme-accent);
+    margin: 1rem auto;
+    border-radius: 2px;
+}
+
+/* Status Indicators */
+.status-open {
+    color: var(--wr-success) !important;
+    font-weight: 700;
+}
+
+.status-closed {
+    color: var(--wr-error) !important;
+    font-weight: 700;
+}
+
+/* ==========================================================================
+   12. RESPONSIVE DESIGN
+   ========================================================================== */
+
+/* Mobile First Approach */
+@media (max-width: 767.98px) {
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-content .tagline {
+        font-size: 1.2rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn:last-child {
+        margin-bottom: 0;
+    }
+    
+    .card-img-top {
+        height: 180px;
+    }
+    
+    .menu-item-card img {
+        height: 160px;
+    }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .hero-content h1 {
+        font-size: 3rem;
+    }
+    
+    .hero-content .tagline {
+        font-size: 1.3rem;
+    }
+    
+    .section-title {
+        font-size: 2.25rem;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1200px) {
+    .hero-content h1 {
+        font-size: 4rem;
+    }
+    
+    .hero-content .tagline {
+        font-size: 1.75rem;
+    }
+    
+    .section-title {
+        font-size: 2.8rem;
+    }
+    
+    .container {
+        max-width: 1140px;
+    }
+}
+
+/* ==========================================================================
+   13. ACCESSIBILITY ENHANCEMENTS
+   ========================================================================== */
+
+/* Skip to main content link */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--theme-primary);
+    color: var(--theme-text-on-primary);
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 0 0 4px 4px;
+    z-index: 10000;
+    font-weight: 600;
+}
+
+.skip-link:focus {
+    top: 0;
+    color: var(--theme-text-on-primary);
+}
+
+/* Focus States */
+button:focus,
+.btn:focus,
+.form-control:focus,
+.nav-link:focus,
+a:focus {
+    outline: 3px solid var(--wr-gold) !important;
+    outline-offset: 2px !important;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    :root {
+        --theme-text: #000000;
+        --theme-text-light: #333333;
+        --theme-border: #000000;
+        --theme-border-dark: #000000;
+    }
+    
+    .btn,
+    .card,
+    .form-control,
+    .alert {
+        border-width: 3px !important;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --theme-bg: #1a1a1a;
+        --theme-bg-secondary: #2c2c2c;
+        --theme-text: #ffffff;
+        --theme-text-light: #cccccc;
+        --theme-border: #444444;
+    }
+    
+    .card {
+        background-color: var(--theme-bg-secondary);
+        border-color: var(--theme-border);
+    }
+}
+
+/* ==========================================================================
+   14. PRINT STYLES
+   ========================================================================== */
+
+@media print {
+    .navbar,
+    .footer,
+    .btn,
+    .social-icons {
+        display: none !important;
+    }
+    
+    .container {
+        max-width: none !important;
+    }
+    
+    .card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    .hero-section {
+        min-height: auto;
+        padding: 2rem 0;
+        background: none !important;
+        color: #000 !important;
+    }
+    
+    .hero-content h1,
+    .hero-content .tagline {
+        color: #000 !important;
+        text-shadow: none !important;
+    }
+}
