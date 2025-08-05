@@ -1,0 +1,229 @@
+/* 
+White Raven Pourhouse - Simple Theme CSS
+This file provides minimal, targeted styling for coffee theme colors
+without interfering with existing Bootstrap functionality.
+*/
+
+/* Coffee Theme Colors */
+:root {
+    --coffee-dark: #3e2723;          /* Navigation and footer background */
+    --coffee-primary: #5d4037;       /* Primary buttons and text */
+    --coffee-medium: #6d4c41;        /* Hover states */
+    --gold: #ffc107;                 /* Accent color */
+    --gold-dark: #ff8f00;           /* Gold hover state */
+}
+
+/* Navigation - Override Bootstrap navbar-dark */
+.navbar.navbar-dark {
+    background-color: var(--coffee-dark) !important;
+}
+
+.navbar-dark .navbar-brand,
+.navbar-dark .navbar-nav .nav-link {
+    color: white !important;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+    color: var(--gold) !important;
+}
+
+/* Primary Button Override */
+.btn-primary {
+    background-color: var(--coffee-primary) !important;
+    border-color: var(--coffee-primary) !important;
+    color: white !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--coffee-medium) !important;
+    border-color: var(--coffee-medium) !important;
+    color: white !important;
+}
+
+/* Hero Section - Override existing hero styles */
+.hero-section.bg-primary {
+    background: linear-gradient(135deg, var(--coffee-primary) 0%, var(--coffee-medium) 100%) !important;
+    color: white !important;
+}
+
+/* Text Primary Override */
+.text-primary {
+    color: var(--coffee-primary) !important;
+}
+
+.bg-primary {
+    background-color: var(--coffee-primary) !important;
+    color: white !important;
+}
+
+/* Footer */
+.footer,
+footer {
+    background-color: var(--coffee-dark) !important;
+    color: white !important;
+}
+
+.footer h5,
+.footer h6,
+footer h5,
+footer h6 {
+    color: var(--gold) !important;
+}
+
+.footer a,
+footer a {
+    color: white !important;
+}
+
+.footer a:hover,
+footer a:hover {
+    color: var(--gold) !important;
+}
+
+/* Call-to-Action Section */
+.cta-section.bg-dark {
+    background: linear-gradient(135deg, var(--coffee-dark) 0%, var(--coffee-medium) 100%) !important;
+}
+
+/* Badge Primary Override */
+.badge.bg-primary {
+    background-color: var(--coffee-primary) !important;
+    color: white !important;
+}
+
+/* Preserve existing image functionality */
+.hero-image-container img {
+    max-height: 400px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.hero-image-placeholder {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--light-gray, #f5f5f5);
+    border: 2px dashed #dee2e6;
+    border-radius: 0.5rem;
+}
+
+.menu-item-card img {
+    height: 200px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.menu-image-container {
+    min-height: 150px;
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Menu decoration image */
+.menu-decoration-image {
+    max-height: 200px;  
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.menu-decoration-image:hover {
+    transform: scale(1.02);
+}
+
+/* Preserve card hover effects */
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Form focus states */
+.form-control:focus {
+    border-color: var(--coffee-primary);
+    box-shadow: 0 0 0 0.2rem rgba(93, 64, 55, 0.25);
+}
+
+/* Links */
+a {
+    color: var(--coffee-primary);
+}
+
+a:hover {
+    color: var(--coffee-medium);
+}
+
+/* Hours display styling */
+.hours-display {
+    background-color: var(--coffee-cream, #efebe9);
+    border-left: 4px solid var(--coffee-primary);
+    padding: 1rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+    color: var(--charcoal, #212121);
+}
+
+/* Social icons */
+.social-icons a {
+    display: inline-block;
+    margin: 0 0.5rem;
+    padding: 0.75rem;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    color: white;
+    text-decoration: none;
+}
+
+.social-icons a:hover {
+    background-color: var(--gold);
+    color: var(--charcoal, #212121);
+    transform: translateY(-2px);
+}
+
+/* Status indicators */
+.status-open {
+    color: var(--success, #2e7d32) !important;
+    font-weight: 700;
+}
+
+.status-closed {
+    color: var(--error, #c62828) !important;
+    font-weight: 700;
+}
+
+/* Accessibility */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--coffee-primary);
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 0 0 4px 4px;
+    z-index: 10000;
+    font-weight: 600;
+}
+
+.skip-link:focus {
+    top: 0;
+    color: white;
+}
+
+/* Focus states for accessibility */
+button:focus,
+.btn:focus,
+.form-control:focus,
+.nav-link:focus,
+a:focus {
+    outline: 3px solid var(--gold) !important;
+    outline-offset: 2px !important;
+}

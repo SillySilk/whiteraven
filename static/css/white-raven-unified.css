@@ -1,87 +1,37 @@
 /* 
 White Raven Pourhouse - Unified Theme CSS
-This file provides comprehensive, cohesive styling for the coffee shop website
-with proper contrast ratios and accessibility considerations.
+This file provides cohesive styling for the coffee shop website
+with proper contrast ratios and coffee theme colors.
 */
 
 /* ==========================================================================
-   1. CSS CUSTOM PROPERTIES (VARIABLES)
+   CSS CUSTOM PROPERTIES (VARIABLES) - Coffee Theme Colors
    ========================================================================== */
 
 :root {
-    /* Core Coffee Theme Colors with High Contrast */
-    --wr-coffee-dark: #3e2723;        /* Rich dark brown - primary navigation/footer */
-    --wr-coffee-primary: #5d4037;      /* Medium brown - main brand color */
-    --wr-coffee-medium: #6d4c41;       /* Warm brown - buttons and accents */
-    --wr-coffee-light: #8d6e63;        /* Light brown - hover states */
-    --wr-coffee-cream: #efebe9;        /* Very light cream - backgrounds */
+    /* Coffee Theme Colors */
+    --coffee-dark: #3e2723;           /* Rich dark brown for navigation/footer */
+    --coffee-primary: #5d4037;        /* Medium brown for main elements */
+    --coffee-medium: #6d4c41;         /* Warm brown for buttons */
+    --coffee-light: #8d6e63;          /* Light brown for hover states */
+    --coffee-cream: #efebe9;          /* Light cream for backgrounds */
     
     /* Accent Colors */
-    --wr-gold: #ffc107;                /* Gold - premium accents */
-    --wr-gold-dark: #ff8f00;          /* Darker gold - hover states */
-    --wr-orange: #ff5722;              /* Warm orange - call-to-action */
+    --gold: #ffc107;                  /* Gold accents */
+    --gold-dark: #ff8f00;            /* Darker gold for hover */
     
-    /* Neutral Colors with Proper Contrast */
-    --wr-white: #ffffff;               /* Pure white */
-    --wr-off-white: #fafafa;           /* Slightly off-white */
-    --wr-light-gray: #f5f5f5;          /* Light background */
-    --wr-medium-gray: #9e9e9e;         /* Medium gray for less important text */
-    --wr-dark-gray: #424242;           /* Dark gray for readable text */
-    --wr-charcoal: #212121;            /* Near-black for high contrast text */
+    /* Neutral Colors */
+    --white: #ffffff;
+    --light-gray: #f5f5f5;
+    --medium-gray: #9e9e9e;
+    --dark-gray: #424242;
+    --charcoal: #212121;
     
     /* Status Colors */
-    --wr-success: #2e7d32;             /* Green - success states */
-    --wr-warning: #f57c00;             /* Orange - warning states */
-    --wr-error: #c62828;               /* Red - error states */
-    --wr-info: #1976d2;                /* Blue - info states */
-    
-    /* Semantic Color Assignments */
-    --theme-primary: var(--wr-coffee-primary);
-    --theme-secondary: var(--wr-coffee-medium);
-    --theme-accent: var(--wr-gold);
-    
-    /* Text Colors */
-    --theme-text: var(--wr-charcoal);
-    --theme-text-light: var(--wr-dark-gray);
-    --theme-text-muted: var(--wr-medium-gray);
-    --theme-text-inverse: var(--wr-white);
-    --theme-text-on-primary: var(--wr-white);
-    
-    /* Background Colors */
-    --theme-bg: var(--wr-white);
-    --theme-bg-secondary: var(--wr-light-gray);
-    --theme-bg-accent: var(--wr-coffee-cream);
-    
-    /* Navigation Colors */
-    --theme-navbar-bg: var(--wr-coffee-dark);
-    --theme-navbar-text: var(--wr-white);
-    --theme-navbar-hover: var(--wr-gold);
-    --theme-navbar-active: var(--wr-gold);
-    
-    /* Button Colors */
-    --theme-btn-primary-bg: var(--wr-coffee-primary);
-    --theme-btn-primary-text: var(--wr-white);
-    --theme-btn-primary-hover: var(--wr-coffee-medium);
-    
-    --theme-btn-secondary-bg: var(--wr-coffee-light);
-    --theme-btn-secondary-text: var(--wr-white);
-    --theme-btn-secondary-hover: var(--wr-coffee-medium);
-    
-    --theme-btn-accent-bg: var(--wr-gold);
-    --theme-btn-accent-text: var(--wr-charcoal);
-    --theme-btn-accent-hover: var(--wr-gold-dark);
-    
-    /* Footer Colors */
-    --theme-footer-bg: var(--wr-coffee-dark);
-    --theme-footer-text: var(--wr-white);
-    --theme-footer-link: var(--wr-gold);
-    --theme-footer-link-hover: var(--wr-gold-dark);
-    
-    /* Border and Shadow Colors */
-    --theme-border: #e0e0e0;
-    --theme-border-dark: #bdbdbd;
-    --theme-shadow: rgba(0, 0, 0, 0.1);
-    --theme-shadow-strong: rgba(0, 0, 0, 0.2);
+    --success: #2e7d32;
+    --warning: #f57c00;
+    --error: #c62828;
+    --info: #1976d2;
 }
 
 /* ==========================================================================
