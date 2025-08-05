@@ -1,0 +1,3 @@
+  - Username: admin
+  - Password: WRaven2024!
+  - URL: https://whiteraven.onrender.com/admin/

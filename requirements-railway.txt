@@ -1,0 +1,9 @@
+# Railway-optimized requirements
+Django==5.2.4
+Pillow==11.1.0
+psycopg2-binary==2.9.9
+python-decouple==3.8
+pytz==2024.1
+django-extensions==3.2.3
+django-admin-interface==0.30.1
+django-colorfield==0.14.0

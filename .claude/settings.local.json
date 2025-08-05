@@ -50,7 +50,15 @@
       "Bash(git push:*)",
       "Bash(git commit:*)",
       "Bash(\"venv\\Scripts\\pip.exe\" install requests)",
-      "Bash(\"venv\\Scripts\\pip.exe\" install:*)"
+      "Bash(\"venv\\Scripts\\pip.exe\" install:*)",
+      "mcp__github__get_me",
+      "Bash(claude mcp:*)",
+      "Bash(cp:*)",
+      "WebFetch(domain:docs.render.com)",
+      "WebFetch(domain:render.com)",
+      "WebFetch(domain:modelcontextprotocol.io)",
+      "Bash(npm install:*)",
+      "Bash(touch:*)"
     ],
     "deny": []
   }
