@@ -17,6 +17,9 @@ python load_production_data_corrected.py
 # Clear any broken image references to force fresh Cloudinary uploads
 python clear_broken_images.py
 
+# Show current image status for debugging
+python show_current_images.py
+
 # Ensure admin user is created and working
 python create_admin.py
 
