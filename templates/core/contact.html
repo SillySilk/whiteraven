@@ -12,7 +12,7 @@
         <div class="row align-items-center">
             <div class="col-lg-6">
                 <h1 class="display-4 fw-bold text-white mb-3">Contact Us</h1>
-                <p class="lead text-white-50 mb-4">
+                <p class="lead text-white mb-4">
                     We'd love to hear from you! Whether you have a question, feedback, or just want to say hello, 
                     don't hesitate to reach out.
                 </p>
@@ -25,7 +25,7 @@
                             <div class="d-flex align-items-center">
                                 <i class="bi bi-telephone-fill fs-4 me-3"></i>
                                 <div>
-                                    <small class="text-white-50 d-block">Call Us</small>
+                                    <small class="text-white d-block opacity-75">Call Us</small>
                                     <a href="tel:{{ business_info.phone }}" class="text-white text-decoration-none fw-bold">
                                         {{ business_info.phone }}
                                     </a>
@@ -39,7 +39,7 @@
                             <div class="d-flex align-items-center">
                                 <i class="bi bi-envelope-fill fs-4 me-3"></i>
                                 <div>
-                                    <small class="text-white-50 d-block">Email Us</small>
+                                    <small class="text-white d-block opacity-75">Email Us</small>
                                     <a href="mailto:{{ business_info.email }}" class="text-white text-decoration-none fw-bold">
                                         {{ business_info.email }}
                                     </a>
@@ -333,10 +333,6 @@
 
 {% block extra_css %}
 <style>
-.bg-gradient {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
 .contact-icon {
     width: 40px;
     height: 40px;
@@ -354,12 +350,6 @@
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.contact-form .form-control:focus,
-.contact-form .form-select:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-}
-
 .contact-method {
     transition: transform 0.2s ease;
 }
@@ -373,16 +363,12 @@
 }
 
 .accordion-button:not(.collapsed) {
-    background-color: #667eea;
+    background-color: #6f4f28;
     color: white;
 }
 
 #custom-subject-field {
     display: none;
-}
-
-.text-white-50 {
-    color: rgba(255, 255, 255, 0.5) !important;
 }
 </style>
 {% endblock %}
