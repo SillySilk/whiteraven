@@ -342,13 +342,15 @@
 
 {% block extra_css %}
 <style>
-.bg-gradient {
-    background: linear-gradient(135deg, #5D4E37 0%, #8B7355 50%, #3E2723 100%);
+/* Override Bootstrap's bg-gradient with coffee shop colors */
+.location-header.bg-gradient {
+    background: linear-gradient(135deg, #5D4E37 0%, #8B7355 50%, #3E2723 100%) !important;
     position: relative;
     overflow: hidden;
+    min-height: 400px;
 }
 
-.bg-gradient::before {
+.location-header.bg-gradient::before {
     content: '';
     position: absolute;
     top: 0;
