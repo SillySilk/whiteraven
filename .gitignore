@@ -10,9 +10,9 @@ db.sqlite3-journal
 # Static files (collected)
 /staticfiles/
 
-# Media files (uploaded)
-/media/uploads/*
-!/media/uploads/.gitkeep
+# Media files (uploaded) - exclude entire media folder
+/media/
+!media/.gitkeep
 
 # Environment variables
 .env
