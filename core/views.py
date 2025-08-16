@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.conf import settings
 from django.utils import timezone
 from django.http import JsonResponse
 from datetime import datetime
 import json
 
-from .models import BusinessInfo, ContactSubmission
+from .models import BusinessInfo, ContactSubmission, SiteTheme
 from .forms import ContactForm
 from .email_utils import EmailService
 from menu.models import MenuItem
@@ -245,3 +246,130 @@ def current_status_api(request):
             'is_special': False,
             'error': str(e)
         })
+
+
+@staff_member_required
+def site_images_manager(request):
+    """
+    Site Images management page for admin users.
+    Allows easy management of all design images (hero, menu decoration, etc.)
+    """
+    # Get current business info and site theme
+    try:
+        business_info = BusinessInfo.objects.first()
+    except BusinessInfo.DoesNotExist:
+        business_info = None
+    
+    try:
+        site_theme = SiteTheme.get_active_theme()
+    except Exception:
+        site_theme = None
+    
+    if request.method == 'POST':
+        # Handle image uploads
+        success_messages = []
+        error_messages = []
+        
+        # Handle hero image upload
+        if 'hero_image' in request.FILES:
+            if business_info:
+                old_image = business_info.hero_image
+                business_info.hero_image = request.FILES['hero_image']
+                business_info.save()
+                success_messages.append("Hero image updated successfully!")
+                
+                # Delete old image file if it exists
+                if old_image:
+                    try:
+                        old_image.delete(save=False)
+                    except:
+                        pass
+            else:
+                error_messages.append("Business information not found. Please set up business info first.")
+        
+        # Handle menu decoration image upload
+        if 'menu_decoration_image' in request.FILES:
+            if site_theme:
+                old_image = site_theme.menu_decoration_image
+                site_theme.menu_decoration_image = request.FILES['menu_decoration_image']
+                
+                # Update alt text if provided
+                alt_text = request.POST.get('menu_decoration_alt_text', '').strip()
+                if alt_text:
+                    site_theme.menu_decoration_alt_text = alt_text
+                
+                site_theme.save()
+                success_messages.append("Menu decoration image updated successfully!")
+                
+                # Delete old image file if it exists
+                if old_image:
+                    try:
+                        old_image.delete(save=False)
+                    except:
+                        pass
+            else:
+                error_messages.append("Site theme not found. Please set up site theme first.")
+        
+        # Handle image deletions
+        if request.POST.get('delete_hero_image') == 'true':
+            if business_info and business_info.hero_image:
+                business_info.hero_image.delete(save=False)
+                business_info.hero_image = None
+                business_info.save()
+                success_messages.append("Hero image removed successfully!")
+        
+        if request.POST.get('delete_menu_decoration') == 'true':
+            if site_theme and site_theme.menu_decoration_image:
+                site_theme.menu_decoration_image.delete(save=False)
+                site_theme.menu_decoration_image = None
+                site_theme.save()
+                success_messages.append("Menu decoration image removed successfully!")
+        
+        # Show messages
+        for msg in success_messages:
+            messages.success(request, msg)
+        for msg in error_messages:
+            messages.error(request, msg)
+        
+        # Redirect to prevent resubmission
+        return redirect('core:site_images')
+    
+    # Collect all site images information
+    site_images = []
+    
+    # Hero Image
+    hero_info = {
+        'name': 'Hero Image',
+        'description': 'Main banner image displayed on the homepage',
+        'field_name': 'hero_image',
+        'current_image': business_info.hero_image if business_info else None,
+        'upload_path': 'business/hero/',
+        'recommended_size': '1200x600px',
+        'usage': 'Homepage banner, first thing visitors see',
+        'delete_field': 'delete_hero_image'
+    }
+    site_images.append(hero_info)
+    
+    # Menu Decoration Image
+    menu_decoration_info = {
+        'name': 'Menu Decoration Image',
+        'description': 'Decorative image shown on the menu page',
+        'field_name': 'menu_decoration_image',
+        'current_image': site_theme.menu_decoration_image if site_theme else None,
+        'upload_path': 'site_theme/menu/',
+        'recommended_size': '400x300px',
+        'usage': 'Menu page decoration, replaces the white stats box',
+        'delete_field': 'delete_menu_decoration',
+        'alt_text': site_theme.menu_decoration_alt_text if site_theme else '',
+        'alt_text_field': 'menu_decoration_alt_text'
+    }
+    site_images.append(menu_decoration_info)
+    
+    context = {
+        'site_images': site_images,
+        'business_info': business_info,
+        'site_theme': site_theme,
+        'page_title': 'Site Images Manager',
+    }
+    
+    return render(request, 'core/site_images_manager.html', context)

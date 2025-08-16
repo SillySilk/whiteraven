@@ -59,7 +59,10 @@
       "WebFetch(domain:modelcontextprotocol.io)",
       "Bash(npm install:*)",
       "Bash(touch:*)",
-      "WebFetch(domain:docs.djangoproject.com)"
+      "WebFetch(domain:docs.djangoproject.com)",
+      "Bash(set PRODUCTION=False)",
+      "Bash(move .env.render .env.render.bak)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }

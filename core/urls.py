@@ -9,4 +9,5 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('about/', views.about, name='about'),
     path('api/status/', views.current_status_api, name='current_status_api'),
+    path('admin/site-images/', views.site_images_manager, name='site_images'),
 ]
