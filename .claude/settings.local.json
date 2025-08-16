@@ -65,7 +65,8 @@
       "Bash(mv:*)",
       "Bash(\"venv\\Scripts\\pip.exe\" install cloudinary django-cloudinary-storage)",
       "Bash(move whiteraven.env whiteraven.env.bak)",
-      "Bash(set)"
+      "Bash(set)",
+      "Bash(dir:*)"
     ],
     "deny": []
   }

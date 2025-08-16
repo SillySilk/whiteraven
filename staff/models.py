@@ -354,3 +354,315 @@ class Schedule(models.Model):
         """Calculate wages earned for this shift"""
         hours = self.actual_hours if self.status == 'completed' else self.scheduled_hours
         return hours * float(self.employee.hourly_wage)
+
+
+class EmployeeAvailability(models.Model):
+    """
+    Track employee availability preferences and restrictions
+    """
+    WEEKDAY_CHOICES = [
+        (0, 'Monday'),
+        (1, 'Tuesday'),
+        (2, 'Wednesday'),
+        (3, 'Thursday'),
+        (4, 'Friday'),
+        (5, 'Saturday'),
+        (6, 'Sunday'),
+    ]
+    
+    AVAILABILITY_TYPE_CHOICES = [
+        ('available', 'Available'),
+        ('preferred', 'Preferred'),
+        ('unavailable', 'Unavailable'),
+        ('limited', 'Limited Availability'),
+    ]
+    
+    employee = models.ForeignKey(
+        Employee,
+        on_delete=models.CASCADE,
+        related_name='availability_preferences',
+        help_text="Employee this availability applies to"
+    )
+    
+    weekday = models.IntegerField(
+        choices=WEEKDAY_CHOICES,
+        help_text="Day of the week (0=Monday, 6=Sunday)"
+    )
+    
+    availability_type = models.CharField(
+        max_length=15,
+        choices=AVAILABILITY_TYPE_CHOICES,
+        default='available',
+        help_text="Type of availability for this day"
+    )
+    
+    start_time = models.TimeField(
+        blank=True,
+        null=True,
+        help_text="Earliest time employee can start (leave blank if unavailable)"
+    )
+    
+    end_time = models.TimeField(
+        blank=True,
+        null=True,
+        help_text="Latest time employee can work until (leave blank if unavailable)"
+    )
+    
+    notes = models.TextField(
+        blank=True,
+        help_text="Additional notes about availability (e.g., 'School pickup at 3pm')"
+    )
+    
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Whether this availability preference is currently active"
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Employee Availability"
+        verbose_name_plural = "Employee Availability"
+        ordering = ['employee', 'weekday']
+        unique_together = ['employee', 'weekday']
+    
+    def __str__(self):
+        day_name = self.get_weekday_display()
+        if self.availability_type == 'unavailable':
+            return f"{self.employee.user.get_full_name()} - {day_name}: Unavailable"
+        elif self.start_time and self.end_time:
+            return f"{self.employee.user.get_full_name()} - {day_name}: {self.start_time}-{self.end_time} ({self.get_availability_type_display()})"
+        else:
+            return f"{self.employee.user.get_full_name()} - {day_name}: {self.get_availability_type_display()}"
+    
+    def clean(self):
+        """Validate availability data"""
+        if self.availability_type != 'unavailable':
+            if not self.start_time or not self.end_time:
+                raise ValidationError("Start and end times are required unless marked as unavailable")
+            
+            if self.start_time >= self.end_time:
+                raise ValidationError("Start time must be before end time")
+
+
+class ShiftSwapRequest(models.Model):
+    """
+    Handle requests for employees to swap shifts with each other
+    """
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved_by_receiver', 'Approved by Receiver'),
+        ('approved_by_manager', 'Approved by Manager'),
+        ('completed', 'Completed'),
+        ('denied', 'Denied'),
+        ('cancelled', 'Cancelled'),
+    ]
+    
+    # The shift that needs coverage
+    original_shift = models.ForeignKey(
+        Schedule,
+        on_delete=models.CASCADE,
+        related_name='swap_requests_original',
+        help_text="The shift that the requester wants to give away"
+    )
+    
+    # Who is requesting the swap
+    requester = models.ForeignKey(
+        Employee,
+        on_delete=models.CASCADE,
+        related_name='swap_requests_made',
+        help_text="Employee requesting the swap"
+    )
+    
+    # Who they want to swap with
+    receiver = models.ForeignKey(
+        Employee,
+        on_delete=models.CASCADE,
+        related_name='swap_requests_received',
+        help_text="Employee being asked to take the shift"
+    )
+    
+    # Optional: shift the receiver gives in return
+    return_shift = models.ForeignKey(
+        Schedule,
+        on_delete=models.CASCADE,
+        related_name='swap_requests_return',
+        blank=True,
+        null=True,
+        help_text="Optional: shift that receiver gives in return"
+    )
+    
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending',
+        help_text="Current status of the swap request"
+    )
+    
+    reason = models.TextField(
+        help_text="Reason for requesting the swap"
+    )
+    
+    manager_notes = models.TextField(
+        blank=True,
+        help_text="Notes from manager about this swap request"
+    )
+    
+    approved_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='approved_swaps',
+        help_text="Manager who approved this swap"
+    )
+    
+    approved_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text="When the swap was approved"
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Shift Swap Request"
+        verbose_name_plural = "Shift Swap Requests"
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.requester.user.get_full_name()} → {self.receiver.user.get_full_name()} ({self.original_shift.date})"
+    
+    def clean(self):
+        """Validate swap request"""
+        if self.requester == self.receiver:
+            raise ValidationError("Cannot swap shift with yourself")
+        
+        if self.original_shift.employee != self.requester:
+            raise ValidationError("Can only request swap for your own shifts")
+        
+        if self.return_shift and self.return_shift.employee != self.receiver:
+            raise ValidationError("Return shift must belong to the receiver")
+    
+    @property
+    def is_pending(self):
+        """Check if swap is still pending"""
+        return self.status == 'pending'
+    
+    @property
+    def can_be_approved(self):
+        """Check if swap can be approved by manager"""
+        return self.status in ['pending', 'approved_by_receiver']
+
+
+class ScheduleTemplate(models.Model):
+    """
+    Save common schedule patterns for easy reuse
+    """
+    TEMPLATE_TYPE_CHOICES = [
+        ('weekly', 'Weekly Template'),
+        ('seasonal', 'Seasonal Template'),
+        ('holiday', 'Holiday Template'),
+        ('special', 'Special Event'),
+    ]
+    
+    name = models.CharField(
+        max_length=100,
+        help_text="Name for this schedule template (e.g., 'Summer Weekly', 'Holiday Rush')"
+    )
+    
+    template_type = models.CharField(
+        max_length=15,
+        choices=TEMPLATE_TYPE_CHOICES,
+        default='weekly',
+        help_text="Type of schedule template"
+    )
+    
+    description = models.TextField(
+        blank=True,
+        help_text="Description of when to use this template"
+    )
+    
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Whether this template is currently available for use"
+    )
+    
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        help_text="Who created this template"
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Schedule Template"
+        verbose_name_plural = "Schedule Templates"
+        ordering = ['template_type', 'name']
+    
+    def __str__(self):
+        return f"{self.name} ({self.get_template_type_display()})"
+
+
+class ScheduleTemplateItem(models.Model):
+    """
+    Individual shifts within a schedule template
+    """
+    template = models.ForeignKey(
+        ScheduleTemplate,
+        on_delete=models.CASCADE,
+        related_name='template_items',
+        help_text="The template this shift belongs to"
+    )
+    
+    weekday = models.IntegerField(
+        choices=EmployeeAvailability.WEEKDAY_CHOICES,
+        help_text="Day of the week for this shift"
+    )
+    
+    role = models.CharField(
+        max_length=20,
+        choices=Employee.ROLE_CHOICES,
+        help_text="Required role for this shift"
+    )
+    
+    shift_type = models.CharField(
+        max_length=10,
+        choices=Schedule.SHIFT_TYPE_CHOICES,
+        default='mid',
+        help_text="Type of shift"
+    )
+    
+    start_time = models.TimeField(
+        help_text="Shift start time"
+    )
+    
+    end_time = models.TimeField(
+        help_text="Shift end time"
+    )
+    
+    break_duration = models.PositiveIntegerField(
+        default=30,
+        validators=[MinValueValidator(0), MaxValueValidator(120)],
+        help_text="Break duration in minutes"
+    )
+    
+    notes = models.TextField(
+        blank=True,
+        help_text="Notes about this shift (e.g., 'Needs experienced barista')"
+    )
+    
+    class Meta:
+        verbose_name = "Template Shift"
+        verbose_name_plural = "Template Shifts"
+        ordering = ['weekday', 'start_time']
+    
+    def __str__(self):
+        day_name = dict(EmployeeAvailability.WEEKDAY_CHOICES)[self.weekday]
+        role_name = dict(Employee.ROLE_CHOICES)[self.role]
+        return f"{day_name} {self.start_time}-{self.end_time} ({role_name})"

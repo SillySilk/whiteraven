@@ -6,7 +6,7 @@ from django.utils.safestring import mark_safe
 from django.db.models import Sum, Count, Q
 from django.urls import reverse
 from datetime import datetime, timedelta
-from .models import Employee, Schedule
+from .models import Employee, Schedule, EmployeeAvailability, ShiftSwapRequest, ScheduleTemplate, ScheduleTemplateItem
 
 
 class EmployeeInline(admin.StackedInline):
@@ -469,6 +469,296 @@ class ScheduleAdmin(admin.ModelAdmin):
             end_date = datetime.now().date() + timedelta(days=30)
             qs = qs.filter(date__gte=start_date, date__lte=end_date)
         return qs
+
+
+class AvailabilityInline(admin.TabularInline):
+    """
+    Inline admin for employee availability preferences
+    """
+    model = EmployeeAvailability
+    extra = 0
+    fields = ('weekday', 'availability_type', 'start_time', 'end_time', 'notes', 'is_active')
+    
+    def get_queryset(self, request):
+        """Order by weekday"""
+        return super().get_queryset(request).order_by('weekday')
+
+
+@admin.register(EmployeeAvailability)
+class EmployeeAvailabilityAdmin(admin.ModelAdmin):
+    """
+    Admin interface for employee availability tracking
+    """
+    list_display = (
+        'employee_name',
+        'weekday_display',
+        'availability_type',
+        'time_range_display',
+        'is_active'
+    )
+    
+    list_filter = (
+        'weekday',
+        'availability_type',
+        'is_active',
+        'employee__role'
+    )
+    
+    search_fields = (
+        'employee__user__first_name',
+        'employee__user__last_name',
+        'notes'
+    )
+    
+    fieldsets = (
+        ('Employee & Day', {
+            'fields': ('employee', 'weekday', 'is_active')
+        }),
+        ('Availability Details', {
+            'fields': ('availability_type', 'start_time', 'end_time')
+        }),
+        ('Notes', {
+            'fields': ('notes',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def employee_name(self, obj):
+        """Display employee name with link"""
+        name = obj.employee.user.get_full_name() or obj.employee.user.username
+        emp_url = reverse('admin:staff_employee_change', args=[obj.employee.pk])
+        return format_html('<a href="{}">{}</a>', emp_url, name)
+    employee_name.short_description = 'Employee'
+    employee_name.admin_order_field = 'employee__user__last_name'
+    
+    def weekday_display(self, obj):
+        """Display weekday with color coding"""
+        day_name = obj.get_weekday_display()
+        colors = {
+            'Saturday': '#ff6b6b',  # Red for weekend
+            'Sunday': '#ff6b6b',    # Red for weekend
+        }
+        color = colors.get(day_name, '#4ecdc4')  # Default teal
+        return format_html(
+            '<span style="color: {}; font-weight: bold;">{}</span>',
+            color, day_name
+        )
+    weekday_display.short_description = 'Day'
+    
+    def time_range_display(self, obj):
+        """Display time range with availability type"""
+        if obj.availability_type == 'unavailable':
+            return format_html('<span style="color: #dc3545;">Unavailable</span>')
+        elif obj.start_time and obj.end_time:
+            color = '#28a745' if obj.availability_type == 'preferred' else '#17a2b8'
+            return format_html(
+                '<span style="color: {};">{} - {}</span>',
+                color, obj.start_time.strftime('%H:%M'), obj.end_time.strftime('%H:%M')
+            )
+        return '-'
+    time_range_display.short_description = 'Available Times'
+
+
+@admin.register(ShiftSwapRequest)
+class ShiftSwapRequestAdmin(admin.ModelAdmin):
+    """
+    Admin interface for shift swap requests
+    """
+    list_display = (
+        'swap_summary',
+        'shift_date',
+        'status_display',
+        'created_at',
+        'action_buttons'
+    )
+    
+    list_filter = (
+        'status',
+        'created_at',
+        'original_shift__date',
+        'requester__role'
+    )
+    
+    search_fields = (
+        'requester__user__first_name',
+        'requester__user__last_name',
+        'receiver__user__first_name',
+        'receiver__user__last_name',
+        'reason'
+    )
+    
+    fieldsets = (
+        ('Swap Details', {
+            'fields': ('requester', 'receiver', 'original_shift', 'return_shift')
+        }),
+        ('Request Information', {
+            'fields': ('reason', 'status')
+        }),
+        ('Manager Approval', {
+            'fields': ('manager_notes', 'approved_by', 'approved_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    readonly_fields = ('approved_at', 'created_at', 'updated_at')
+    
+    actions = ['approve_swaps', 'deny_swaps']
+    
+    def swap_summary(self, obj):
+        """Display swap summary"""
+        requester = obj.requester.user.get_full_name() or obj.requester.user.username
+        receiver = obj.receiver.user.get_full_name() or obj.receiver.user.username
+        return f"{requester} → {receiver}"
+    swap_summary.short_description = 'Swap Request'
+    
+    def shift_date(self, obj):
+        """Display shift date and time"""
+        shift = obj.original_shift
+        return f"{shift.date} ({shift.start_time}-{shift.end_time})"
+    shift_date.short_description = 'Shift'
+    shift_date.admin_order_field = 'original_shift__date'
+    
+    def status_display(self, obj):
+        """Display status with color coding"""
+        status_colors = {
+            'pending': '#ffc107',
+            'approved_by_receiver': '#17a2b8',
+            'approved_by_manager': '#28a745',
+            'completed': '#6c757d',
+            'denied': '#dc3545',
+            'cancelled': '#6c757d'
+        }
+        color = status_colors.get(obj.status, '#6c757d')
+        return format_html(
+            '<span style="color: {}; font-weight: bold;">{}</span>',
+            color, obj.get_status_display()
+        )
+    status_display.short_description = 'Status'
+    
+    def action_buttons(self, obj):
+        """Display action buttons for pending requests"""
+        if obj.status == 'pending':
+            return format_html(
+                '<a class="button" href="?action=approve&id={}">Approve</a> '
+                '<a class="button" href="?action=deny&id={}">Deny</a>',
+                obj.pk, obj.pk
+            )
+        return '-'
+    action_buttons.short_description = 'Actions'
+    
+    def approve_swaps(self, request, queryset):
+        """Bulk action to approve swap requests"""
+        updated = 0
+        for swap in queryset.filter(status='pending'):
+            swap.status = 'approved_by_manager'
+            swap.approved_by = request.user
+            swap.approved_at = timezone.now()
+            swap.save()
+            updated += 1
+        
+        self.message_user(request, f'{updated} swap requests approved.')
+    approve_swaps.short_description = "Approve selected swap requests"
+    
+    def deny_swaps(self, request, queryset):
+        """Bulk action to deny swap requests"""
+        updated = queryset.filter(status='pending').update(status='denied')
+        self.message_user(request, f'{updated} swap requests denied.')
+    deny_swaps.short_description = "Deny selected swap requests"
+
+
+class ScheduleTemplateItemInline(admin.TabularInline):
+    """
+    Inline admin for schedule template items
+    """
+    model = ScheduleTemplateItem
+    extra = 0
+    fields = ('weekday', 'role', 'shift_type', 'start_time', 'end_time', 'break_duration', 'notes')
+    ordering = ('weekday', 'start_time')
+
+
+@admin.register(ScheduleTemplate)
+class ScheduleTemplateAdmin(admin.ModelAdmin):
+    """
+    Admin interface for schedule templates
+    """
+    list_display = (
+        'name',
+        'template_type',
+        'shift_count',
+        'is_active',
+        'created_by',
+        'created_at'
+    )
+    
+    list_filter = (
+        'template_type',
+        'is_active',
+        'created_at'
+    )
+    
+    search_fields = (
+        'name',
+        'description'
+    )
+    
+    fieldsets = (
+        ('Template Details', {
+            'fields': ('name', 'template_type', 'description', 'is_active')
+        }),
+        ('Administration', {
+            'fields': ('created_by',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    readonly_fields = ('created_by', 'created_at', 'updated_at')
+    
+    inlines = [ScheduleTemplateItemInline]
+    
+    actions = ['duplicate_template', 'apply_template_to_week']
+    
+    def shift_count(self, obj):
+        """Display number of shifts in template"""
+        count = obj.template_items.count()
+        return f"{count} shifts"
+    shift_count.short_description = 'Shifts'
+    
+    def duplicate_template(self, request, queryset):
+        """Duplicate selected templates"""
+        for template in queryset:
+            # Create copy
+            new_template = ScheduleTemplate.objects.create(
+                name=f"{template.name} (Copy)",
+                template_type=template.template_type,
+                description=template.description,
+                created_by=request.user
+            )
+            
+            # Copy all template items
+            for item in template.template_items.all():
+                ScheduleTemplateItem.objects.create(
+                    template=new_template,
+                    weekday=item.weekday,
+                    role=item.role,
+                    shift_type=item.shift_type,
+                    start_time=item.start_time,
+                    end_time=item.end_time,
+                    break_duration=item.break_duration,
+                    notes=item.notes
+                )
+        
+        self.message_user(request, f'{queryset.count()} templates duplicated.')
+    duplicate_template.short_description = "Duplicate selected templates"
+    
+    def save_model(self, request, obj, form, change):
+        """Auto-set created_by field"""
+        if not change:  # Only set on creation
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)
+
+
+# Update Employee admin to include availability inline
+EmployeeAdmin.inlines = [ScheduleInline, AvailabilityInline]
 
 
 # Unregister the default User admin and register our custom one
