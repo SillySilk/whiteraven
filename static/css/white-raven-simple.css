@@ -296,3 +296,63 @@ body .text-secondary {
     color: #6c757d !important;
     opacity: 1;
 }
+
+/* =================================================================
+   LOCATION PAGE STYLES
+   ================================================================= */
+
+/* Location header with coffee shop gradient background */
+.location-header.bg-gradient {
+    background: linear-gradient(135deg, #5D4E37 0%, #8B7355 50%, #3E2723 100%) !important;
+    position: relative;
+    overflow: hidden;
+    min-height: 400px;
+}
+
+.location-header.bg-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="30" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="60" cy="70" r="2.5" fill="rgba(255,255,255,0.1)"/><circle cx="30" cy="80" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="70" cy="15" r="1.8" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/* Ensure content is above the pattern */
+.location-header .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* Force dark text for light backgrounds to override white text */
+.location-details h2,
+.location-details h3,
+.location-details h4,
+.location-details p,
+.location-details address {
+    color: #212529 !important;
+}
+
+/* Map container styling */
+.map-container {
+    border: 3px solid var(--coffee-primary);
+    box-shadow: 0 8px 25px rgba(93, 78, 55, 0.2);
+}
+
+.map-container iframe {
+    border-radius: 8px;
+}
+
+/* Transportation cards hover effects */
+.transport-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(93, 78, 55, 0.1) !important;
+}
+
+.transport-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(93, 78, 55, 0.3) !important;
+}
