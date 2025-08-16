@@ -12,7 +12,7 @@
         <div class="row align-items-center">
             <div class="col-lg-6">
                 <h1 class="display-4 fw-bold text-white mb-3">Visit Us</h1>
-                <p class="lead text-white-50 mb-4">
+                <p class="lead text-white mb-4">
                     Located in the heart of Felton, we're easy to find and always excited to welcome new friends. 
                     Come discover why we're the best little pour house in town!
                 </p>
@@ -101,23 +101,43 @@
                     {% endif %}
                 </div>
                 
-                <!-- Map Placeholder -->
+                <!-- Interactive Map -->
                 <div class="map-section">
                     <h3 class="mb-3">Find Us on the Map</h3>
-                    <div class="map-placeholder bg-light rounded-3 p-5 text-center">
-                        <i class="bi bi-map display-4 text-muted mb-3"></i>
-                        <h5>Interactive Map Coming Soon!</h5>
-                        <p class="text-muted mb-3">
-                            We're working on integrating an interactive map to make it even easier to find us.
-                        </p>
-                        {% if business_info and business_info.address %}
+                    {% if business_info and business_info.address %}
+                    <div class="map-container bg-light rounded-3 overflow-hidden" style="height: 400px;">
+                        <iframe 
+                            src="https://www.google.com/maps?q={{ business_info.address|urlencode }}&output=embed&z=15"
+                            width="100%" 
+                            height="400" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade"
+                            class="rounded-3">
+                        </iframe>
+                    </div>
+                    <div class="map-actions mt-3 text-center">
                         <a href="https://maps.google.com/?q={{ business_info.address|urlencode }}" 
                            target="_blank" 
-                           class="btn btn-primary">
+                           class="btn btn-outline-primary me-2">
                             <i class="bi bi-box-arrow-up-right me-2"></i>View in Google Maps
                         </a>
-                        {% endif %}
+                        <a href="https://maps.apple.com/?q={{ business_info.address|urlencode }}" 
+                           target="_blank" 
+                           class="btn btn-outline-secondary">
+                            <i class="bi bi-phone me-2"></i>Open in Apple Maps
+                        </a>
                     </div>
+                    {% else %}
+                    <div class="map-placeholder bg-light rounded-3 p-5 text-center">
+                        <i class="bi bi-map display-4 text-muted mb-3"></i>
+                        <h5>Map Unavailable</h5>
+                        <p class="text-muted mb-3">
+                            Address information needed to display the map.
+                        </p>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             
