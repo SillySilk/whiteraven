@@ -195,19 +195,17 @@ cloudinary.config(
     secure=True
 )
 
-# Use Cloudinary for media file storage in production
+# Simple media file configuration
+MEDIA_URL = "/media/"
 if os.environ.get('PRODUCTION') == 'True':
-    # Production: Use Cloudinary for persistent storage
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    # Let Cloudinary handle MEDIA_URL automatically
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Fallback directory for any legacy files
+    # Production: Use basic file storage with WhiteNoise serving
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
     
-    # Enable WhiteNoise to serve any legacy media files as fallback
+    # Enable WhiteNoise to serve media files in production
     WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'zip', 'gz', 'tgz', 'bz2', 'tbz', 'xz', 'br']
     WHITENOISE_MAX_AGE = 31536000  # 1 year cache for media files
 else:
     # Development: Use local storage
-    MEDIA_URL = "/media/"
     MEDIA_ROOT = BASE_DIR / "media"
 
 
