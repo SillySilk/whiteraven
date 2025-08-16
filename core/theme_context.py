@@ -112,9 +112,13 @@ def business_info(request):
         business = BusinessInfo.objects.first()
         if business:
             return {
-                'business_info': business
+                'business_info': business,
+                'formatted_hours': business.get_formatted_hours()
             }
     except Exception:
         pass
     
-    return {}
+    return {
+        'business_info': None,
+        'formatted_hours': {}
+    }

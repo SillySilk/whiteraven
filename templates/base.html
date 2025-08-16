@@ -235,8 +235,14 @@
                     <div class="hours-display">
                         <h6 class="mb-2">Hours</h6>
                         <small>
-                            <div>Mon-Fri: 6:00 AM - 6:00 PM</div>
-                            <div>Sat-Sun: 7:00 AM - 5:00 PM</div>
+                            {% if formatted_hours %}
+                                {% for day, hours in formatted_hours.items %}
+                                    <div>{{ day }}: {{ hours }}</div>
+                                {% endfor %}
+                            {% else %}
+                                <div>Mon-Fri: 6:00 AM - 6:00 PM</div>
+                                <div>Sat-Sun: 7:00 AM - 5:00 PM</div>
+                            {% endif %}
                         </small>
                     </div>
                 </div>

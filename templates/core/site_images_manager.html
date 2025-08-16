@@ -228,7 +228,7 @@
         <div class="recommendations">
             <h4>📐 Recommended Specifications</h4>
             <p><strong>Size:</strong> {{ image_info.recommended_size }}</p>
-            <p><strong>Format:</strong> JPG, PNG, or WebP (will be automatically optimized)</p>
+            <p><strong>Format:</strong> JPG/JPEG only (most efficient format for photos)</p>
             <p><strong>File Size:</strong> Under 2MB for best performance</p>
         </div>
         
@@ -260,7 +260,7 @@
                         <input type="file" 
                                id="{{ image_info.field_name }}" 
                                name="{{ image_info.field_name }}" 
-                               accept="image/jpeg,image/jpg,image/png,image/webp">
+                               accept="image/jpeg,image/jpg">
                         <label for="{{ image_info.field_name }}" class="file-input-label">
                             Choose File
                         </label>
