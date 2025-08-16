@@ -20,6 +20,9 @@ python clear_broken_images.py
 # Show current image status for debugging
 python show_current_images.py
 
+# Debug Cloudinary configuration in detail
+python debug_cloudinary_detailed.py
+
 # Ensure admin user is created and working
 python create_admin.py
 
