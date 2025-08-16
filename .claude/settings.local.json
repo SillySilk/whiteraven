@@ -70,7 +70,9 @@
       "Bash(push.bat)",
       "Bash(cmd.exe /c push.bat)",
       "Bash(git rm:*)",
-      "Bash(./venv/Scripts/python.exe:*)"
+      "Bash(./venv/Scripts/python.exe:*)",
+      "WebSearch",
+      "WebFetch(domain:community.render.com)"
     ],
     "deny": []
   }

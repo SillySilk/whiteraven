@@ -95,12 +95,13 @@ WSGI_APPLICATION = "white_raven_pourhouse.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Database configuration
+# Database configuration - Fix for Render PostgreSQL persistence issue
 if 'DATABASE_URL' in os.environ:
-    # Render PostgreSQL configuration
+    # Render PostgreSQL configuration (production)
     DATABASES = {
         'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
     }
+    print(f"Using Render PostgreSQL: {os.environ.get('DATABASE_URL')[:50]}...")
 elif os.environ.get('PRODUCTION') == 'True':
     # PythonAnywhere MySQL configuration
     DATABASES = {
@@ -113,6 +114,11 @@ elif os.environ.get('PRODUCTION') == 'True':
             'PORT': '',
         }
     }
+    print("Using PythonAnywhere MySQL")
+else:
+    # This should NOT happen in production - if it does, there's a config issue
+    print("WARNING: No database configured! Check environment variables.")
+    raise Exception("No database configuration found")
 
 
 # Password validation
