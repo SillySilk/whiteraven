@@ -30,6 +30,9 @@ urlpatterns = [
     path('favicon.ico', RedirectView.as_view(url='/static/images/favicon.ico', permanent=True)),
 ]
 
-# Serve media files during development
+# Serve media files during development and production
 if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    # Serve media files in production using WhiteNoise
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

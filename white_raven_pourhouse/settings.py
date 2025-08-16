@@ -181,6 +181,13 @@ if os.environ.get('PRODUCTION') == 'True':
 else:
     MEDIA_ROOT = BASE_DIR / "media"
 
+# Configure WhiteNoise to serve media files in production
+# Note: For high-traffic sites, use a CDN instead
+if os.environ.get('PRODUCTION') == 'True':
+    # Enable WhiteNoise to serve media files
+    WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'zip', 'gz', 'tgz', 'bz2', 'tbz', 'xz', 'br']
+    WHITENOISE_MAX_AGE = 31536000  # 1 year cache for media files
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
