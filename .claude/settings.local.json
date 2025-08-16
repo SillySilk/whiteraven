@@ -68,7 +68,8 @@
       "Bash(set)",
       "Bash(dir:*)",
       "Bash(push.bat)",
-      "Bash(cmd.exe /c push.bat)"
+      "Bash(cmd.exe /c push.bat)",
+      "Bash(git rm:*)"
     ],
     "deny": []
   }
