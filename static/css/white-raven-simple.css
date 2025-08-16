@@ -232,3 +232,66 @@ a:focus {
     outline: 3px solid var(--gold) !important;
     outline-offset: 2px !important;
 }
+
+/* CONTRAST FIXES - Ensure proper text visibility on light backgrounds */
+
+/* Fix semi-transparent white text that becomes invisible on light backgrounds */
+.text-white-50 {
+    color: var(--coffee-dark) !important; /* Use dark coffee color instead of semi-transparent white */
+}
+
+/* Fix muted text contrast on light coffee background */
+.text-muted {
+    color: #495057 !important; /* Darker gray for better contrast on light background */
+}
+
+/* Fix lead text in story content */
+.story-content .lead {
+    color: #495057 !important; /* Dark gray instead of light gray */
+}
+
+/* Ensure proper contrast for placeholder text */
+.story-image-placeholder .text-muted,
+.team-placeholder .text-muted {
+    color: #495057 !important;
+}
+
+/* About page specific fixes */
+.about-header .text-white-50 {
+    color: rgba(255, 255, 255, 0.9) !important; /* Higher opacity white on dark gradient */
+}
+
+/* Ensure all muted text on light backgrounds has proper contrast */
+.bg-light .text-muted,
+section.bg-light .text-muted {
+    color: #495057 !important;
+}
+
+/* Additional contrast fixes for common Bootstrap classes */
+.card .text-muted,
+.small.text-muted,
+p.text-muted {
+    color: #495057 !important;
+}
+
+/* Ensure proper contrast for light text elements */
+.text-light {
+    color: #495057 !important; /* Dark gray instead of light gray */
+}
+
+/* Fix any remaining low-contrast text on light coffee background */
+body .text-secondary {
+    color: #495057 !important;
+}
+
+/* Ensure footer hours display has proper contrast */
+.hours-display small,
+.hours-display .text-muted {
+    color: #212529 !important; /* Very dark for maximum contrast */
+}
+
+/* Fix placeholder text in forms for better visibility */
+.form-control::placeholder {
+    color: #6c757d !important;
+    opacity: 1;
+}
