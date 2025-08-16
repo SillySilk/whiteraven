@@ -3,9 +3,33 @@
 
 {% block extrahead %}{{ block.super }}
 <style>
-    /* Hide default admin header on login page */
+    /* Style the admin header for login page */
     #header {
-        display: none;
+        background: linear-gradient(135deg, #5D4E37 0%, #8B7355 100%);
+        padding: 20px;
+        text-align: center;
+        color: white;
+        position: relative;
+    }
+    
+    #header h1 {
+        margin: 0;
+        font-family: 'Georgia', serif;
+        font-size: 28px;
+        font-weight: normal;
+    }
+    
+    #header h1::before {
+        content: '☕ ';
+        font-size: 32px;
+        margin-right: 10px;
+    }
+    
+    #header .tagline {
+        margin: 5px 0 0 0;
+        font-style: italic;
+        opacity: 0.9;
+        font-size: 16px;
     }
     
     /* Full page login styling */
@@ -14,10 +38,16 @@
         margin: 0;
         padding: 0;
         min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    
+    /* Center the login content below header */
+    #content {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        min-height: calc(100vh - 120px);
+        padding: 20px;
     }
     
     /* Login container */
@@ -38,36 +68,12 @@
         background: none;
         padding: 0;
         min-height: auto;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
     }
     
-    #content {
-        padding: 0;
-        margin: 0;
-    }
-    
-    /* Coffee shop branding */
-    .login h1 {
-        text-align: center;
-        color: #5D4E37;
-        font-family: 'Georgia', serif;
-        margin-bottom: 10px;
-        font-size: 24px;
-        font-weight: normal;
-    }
-    
-    .login h1::before {
-        content: '☕ ';
-        font-size: 28px;
-        margin-right: 10px;
-    }
-    
-    .login .tagline {
-        text-align: center;
-        color: #666;
-        font-style: italic;
-        margin-bottom: 30px;
-        font-size: 14px;
-    }
+    /* Remove duplicate branding from login form */
     
     /* Form styling */
     .login form {
@@ -180,11 +186,13 @@
 
 {% block breadcrumbs %}{% endblock %}
 
+{% block branding %}
+<h1>White Raven Pourhouse</h1>
+<div class="tagline">The Best Little Pour House in Felton</div>
+{% endblock %}
+
 {% block content %}
 <div class="login">
-    <h1>White Raven Pourhouse</h1>
-    <div class="tagline">The Best Little Pour House in Felton</div>
-    
     <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
         <div class="form-row">
             {{ form.username.errors }}
