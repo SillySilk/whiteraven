@@ -10,8 +10,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'white_raven_pourhouse.settings'
 django.setup()
 
 from core.models import SiteTheme
-from admin_interface.models import Theme
-from core.theme_context import site_theme, admin_theme_colors
+# Removed admin_interface dependency
+from core.theme_context import site_theme
 
 def debug_production_theme():
     print("🔧 White Raven Theme Debug - Production")
@@ -47,21 +47,10 @@ def debug_production_theme():
     
     print()
     
-    # Check Admin Theme
+    # Admin Theme - now using standard Django admin with custom CSS
     print("2. Admin Theme Status:")
-    admin_themes = Theme.objects.all()
-    active_admin_theme = Theme.objects.filter(active=True).first()
-    
-    print(f"   Total Admin Theme objects: {admin_themes.count()}")
-    if active_admin_theme:
-        print(f"   ✅ Active admin theme: {active_admin_theme.name}")
-        print(f"   Header colors:")
-        print(f"     Background: {active_admin_theme.css_header_background_color}")
-        print(f"     Text: {active_admin_theme.css_header_text_color}")
-        print(f"     Links: {active_admin_theme.css_header_link_color}")
-    else:
-        print("   ❌ No active Admin Theme found")
-    
+    print("   ✅ Using standard Django admin with custom CSS")
+    print("   Custom CSS location: static/admin/css/custom_admin.css")
     print()
     
     # Test context processors
@@ -91,20 +80,8 @@ def debug_production_theme():
     except Exception as e:
         print(f"   ❌ Site theme context error: {e}")
     
-    # Test admin theme context
-    try:
-        admin_context = admin_theme_colors(request)
-        theme_colors = admin_context.get('theme_colors', {})
-        
-        if theme_colors:
-            print(f"   ✅ Admin theme context working")
-            print(f"   Theme colors: {len(theme_colors)} colors")
-            print(f"     Primary: {theme_colors.get('primary', 'N/A')}")
-            print(f"     Button: {theme_colors.get('button_bg', 'N/A')}")
-        else:
-            print("   ❌ Admin theme context returning empty")
-    except Exception as e:
-        print(f"   ❌ Admin theme context error: {e}")
+    # Admin theme now uses standard Django admin with custom CSS
+    print("   ✅ Admin theme using standard Django admin CSS")
     
     print()
     
@@ -134,8 +111,7 @@ def debug_production_theme():
     print("If no active SiteTheme:")
     print("   python manage.py shell -c \"from core.models import SiteTheme; SiteTheme.objects.update(is_active=False); SiteTheme.objects.first().update(is_active=True) if SiteTheme.objects.exists() else None\"")
     print()
-    print("If no active Admin Theme:")
-    print("   python manage.py shell -c \"from admin_interface.models import Theme; Theme.objects.update(active=False); Theme.objects.first().update(active=True) if Theme.objects.exists() else None\"")
+    print("Admin theme now uses standard Django admin with custom CSS")
     print()
     print("To force regenerate CSS:")
     print("   python manage.py collectstatic --clear --noinput")
