@@ -311,6 +311,40 @@ def site_images_manager(request):
             else:
                 error_messages.append("Site theme not found. Please set up site theme first.")
         
+        # Handle about image upload
+        if 'about_image' in request.FILES:
+            if business_info:
+                old_image = business_info.about_image
+                business_info.about_image = request.FILES['about_image']
+                business_info.save()
+                success_messages.append("About page image updated successfully!")
+                
+                # Delete old image file if it exists
+                if old_image:
+                    try:
+                        old_image.delete(save=False)
+                    except:
+                        pass
+            else:
+                error_messages.append("Business information not found. Please set up business info first.")
+        
+        # Handle location image upload
+        if 'location_image' in request.FILES:
+            if business_info:
+                old_image = business_info.location_image
+                business_info.location_image = request.FILES['location_image']
+                business_info.save()
+                success_messages.append("Location page image updated successfully!")
+                
+                # Delete old image file if it exists
+                if old_image:
+                    try:
+                        old_image.delete(save=False)
+                    except:
+                        pass
+            else:
+                error_messages.append("Business information not found. Please set up business info first.")
+        
         # Handle image deletions
         if request.POST.get('delete_hero_image') == 'true':
             if business_info and business_info.hero_image:
@@ -325,6 +359,20 @@ def site_images_manager(request):
                 site_theme.menu_decoration_image = None
                 site_theme.save()
                 success_messages.append("Menu decoration image removed successfully!")
+        
+        if request.POST.get('delete_about_image') == 'true':
+            if business_info and business_info.about_image:
+                business_info.about_image.delete(save=False)
+                business_info.about_image = None
+                business_info.save()
+                success_messages.append("About page image removed successfully!")
+        
+        if request.POST.get('delete_location_image') == 'true':
+            if business_info and business_info.location_image:
+                business_info.location_image.delete(save=False)
+                business_info.location_image = None
+                business_info.save()
+                success_messages.append("Location page image removed successfully!")
         
         # Show messages
         for msg in success_messages:
@@ -365,6 +413,32 @@ def site_images_manager(request):
         'alt_text_field': 'menu_decoration_alt_text'
     }
     site_images.append(menu_decoration_info)
+    
+    # About Image
+    about_info = {
+        'name': 'About Page Image',
+        'description': 'Story image displayed on the About page',
+        'field_name': 'about_image',
+        'current_image': business_info.about_image if business_info else None,
+        'upload_path': '',
+        'recommended_size': '600x400px',
+        'usage': 'About page story section, shows coffee shop atmosphere',
+        'delete_field': 'delete_about_image'
+    }
+    site_images.append(about_info)
+    
+    # Location Image
+    location_info = {
+        'name': 'Location Page Image',
+        'description': 'Header image displayed on the Location page',
+        'field_name': 'location_image',
+        'current_image': business_info.location_image if business_info else None,
+        'upload_path': '',
+        'recommended_size': '600x400px',
+        'usage': 'Location page header, showcases the coffee shop exterior or interior',
+        'delete_field': 'delete_location_image'
+    }
+    site_images.append(location_info)
     
     context = {
         'site_images': site_images,

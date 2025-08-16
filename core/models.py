@@ -74,6 +74,13 @@ class BusinessInfo(models.Model):
         help_text="Image for the About page story section (recommended size: 600x400px)"
     )
     
+    location_image = models.ImageField(
+        upload_to='',
+        blank=True,
+        null=True,
+        help_text="Image for the Location page header (recommended size: 600x400px)"
+    )
+    
     # Social Media Links
     facebook_url = models.URLField(
         blank=True,
