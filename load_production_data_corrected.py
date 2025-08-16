@@ -15,9 +15,41 @@ from menu.models import Category, MenuItem
 from admin_interface.models import Theme
 from django.contrib.auth.models import User
 
+def clear_broken_image_references():
+    """Clear broken image references that may exist from local development"""
+    print("🧹 Clearing broken image references...")
+    
+    # Clear BusinessInfo images if they don't exist
+    try:
+        business_info = BusinessInfo.objects.first()
+        if business_info and business_info.hero_image:
+            if not business_info.hero_image.storage.exists(business_info.hero_image.name):
+                print(f"  Removing broken hero image reference: {business_info.hero_image.name}")
+                business_info.hero_image = None
+                business_info.save()
+    except Exception as e:
+        print(f"  Error clearing business info images: {e}")
+    
+    # Clear SiteTheme images if they don't exist
+    try:
+        site_themes = SiteTheme.objects.all()
+        for theme in site_themes:
+            if theme.menu_decoration_image:
+                if not theme.menu_decoration_image.storage.exists(theme.menu_decoration_image.name):
+                    print(f"  Removing broken menu decoration image: {theme.menu_decoration_image.name}")
+                    theme.menu_decoration_image = None
+                    theme.save()
+    except Exception as e:
+        print(f"  Error clearing site theme images: {e}")
+    
+    print("✅ Broken image references cleared")
+
 def main():
     print("🚀 Loading production data with CORRECTED field names...")
     print("=" * 70)
+    
+    # Clear any broken image references first
+    clear_broken_image_references()
     
     # Business Info - using actual fields from BusinessInfo model
     print("Setting up business information...")
