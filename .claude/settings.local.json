@@ -62,7 +62,8 @@
       "WebFetch(domain:docs.djangoproject.com)",
       "Bash(set PRODUCTION=False)",
       "Bash(move .env.render .env.render.bak)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(\"venv\\Scripts\\pip.exe\" install cloudinary django-cloudinary-storage)"
     ],
     "deny": []
   }

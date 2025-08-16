@@ -50,6 +50,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Cloudinary storage
+    "cloudinary_storage",
+    "cloudinary",
     # Local apps
     "core",
     "menu",
@@ -173,20 +176,44 @@ else:
     STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
-# Media files configuration
-MEDIA_URL = "/media/"
+# Cloudinary configuration for persistent image storage
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'dturwm5za'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '423825422946229'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', '0PWTYCAylXuGUiKOwhS1eX6rBPY'),
+}
+
+# Configure Cloudinary
+cloudinary.config(
+    cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
+    api_key=CLOUDINARY_STORAGE['API_KEY'],
+    api_secret=CLOUDINARY_STORAGE['API_SECRET'],
+    secure=True
+)
+
+# Use Cloudinary for media file storage in production
 if os.environ.get('PRODUCTION') == 'True':
-    # Use Render-compatible media files path
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    # Production: Use Cloudinary for persistent storage
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    MEDIA_URL = '/media/'
 else:
+    # Development: Use local storage
+    MEDIA_URL = "/media/"
     MEDIA_ROOT = BASE_DIR / "media"
 
-# Configure WhiteNoise to serve media files in production
-# Note: For high-traffic sites, use a CDN instead
+# Legacy media configuration (kept for backwards compatibility)
 if os.environ.get('PRODUCTION') == 'True':
-    # Enable WhiteNoise to serve media files
+    # Use Render-compatible media files path (fallback)
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    # Enable WhiteNoise to serve media files (fallback)
     WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'zip', 'gz', 'tgz', 'bz2', 'tbz', 'xz', 'br']
     WHITENOISE_MAX_AGE = 31536000  # 1 year cache for media files
+else:
+    MEDIA_ROOT = BASE_DIR / "media"
 
 
 # Default primary key field type
@@ -227,7 +254,7 @@ if os.environ.get('PRODUCTION') == 'True':
     CSP_SCRIPT_SRC = ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "cdnjs.cloudflare.com"]
     CSP_STYLE_SRC = ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "fonts.googleapis.com"]
     CSP_FONT_SRC = ["'self'", "fonts.gstatic.com", "cdn.jsdelivr.net"]
-    CSP_IMG_SRC = ["'self'", "data:", "blob:"]
+    CSP_IMG_SRC = ["'self'", "data:", "blob:", "res.cloudinary.com", "*.cloudinary.com"]
     CSP_CONNECT_SRC = ["'self'"]
     CSP_FRAME_ANCESTORS = ["'none'"]
     CSP_BASE_URI = ["'self'"]
@@ -254,7 +281,7 @@ else:
     CSP_SCRIPT_SRC = ["'self'", "'unsafe-inline'", "'unsafe-eval'", "cdn.jsdelivr.net"]
     CSP_STYLE_SRC = ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "fonts.googleapis.com"]
     CSP_FONT_SRC = ["'self'", "fonts.gstatic.com", "cdn.jsdelivr.net"]
-    CSP_IMG_SRC = ["'self'", "data:", "blob:"]
+    CSP_IMG_SRC = ["'self'", "data:", "blob:", "res.cloudinary.com", "*.cloudinary.com"]
     
     # Rate limiting (more permissive for development)
     RATE_LIMIT_LOGIN = 10
