@@ -489,7 +489,8 @@ def site_images_manager(request):
 def bulk_image_upload(request):
     """
     Bulk upload view for menu item images.
-    Allows uploading multiple images and automatically matching them to menu items.
+    Allows uploading multiple JPEG images and automatically matching them to menu items.
+    Priority: 1) Exact filename match (replaces existing), 2) Name matching, 3) Manual assignment
     """
     if request.method == 'POST':
         uploaded_files = request.FILES.getlist('bulk_images')
@@ -499,30 +500,55 @@ def bulk_image_upload(request):
         
         for uploaded_file in uploaded_files:
             try:
-                # Extract item name from filename (remove extension)
+                # Validate JPEG file
+                if not _validate_jpeg_file(uploaded_file):
+                    error_messages.append(f"❌ {uploaded_file.name}: Please upload JPEG files only")
+                    continue
+                
                 filename = uploaded_file.name
-                item_name = os.path.splitext(filename)[0].replace('_', ' ').replace('-', ' ').title()
                 
-                # Try to find matching menu item by name (fuzzy matching)
-                # This is optional - if no match, that's totally fine
-                menu_items = MenuItem.objects.filter(name__icontains=item_name.split()[0])
+                # Look for menu items that already have this exact filename
+                # This allows direct file replacement
+                matching_items = MenuItem.objects.filter(image__endswith=filename)
                 
-                if len(menu_items) == 1:
-                    # Great! Found a match, apply automatically
-                    menu_item = menu_items.first()
-                    menu_item.image = uploaded_file
-                    menu_item.save()
-                    success_count += 1
-                    success_messages.append(f"✅ {filename} → {menu_item.name}")
+                if matching_items.exists():
+                    # Direct filename match - replace existing image
+                    for menu_item in matching_items:
+                        old_image = menu_item.image
+                        menu_item.image = uploaded_file
+                        menu_item.save()
+                        
+                        # Delete old image file if it exists and is different
+                        if old_image and old_image != menu_item.image:
+                            try:
+                                old_image.delete(save=False)
+                            except:
+                                pass
                     
-                else:
-                    # No exact match - that's fine, just store the file info for manual assignment
                     success_count += 1
-                    success_messages.append(f"📁 {filename} → Ready for manual assignment")
-                    # Note: File is still uploaded, just not assigned to a menu item yet
+                    if len(matching_items) == 1:
+                        success_messages.append(f"✅ {filename} → Replaced image for {matching_items.first().name}")
+                    else:
+                        success_messages.append(f"✅ {filename} → Replaced images for {len(matching_items)} menu items")
+                else:
+                    # No existing file match - try fuzzy name matching as fallback
+                    item_name = os.path.splitext(filename)[0].replace('_', ' ').replace('-', ' ').title()
+                    name_matches = MenuItem.objects.filter(name__icontains=item_name.split()[0])
+                    
+                    if len(name_matches) == 1:
+                        # Found one name match - assign image
+                        menu_item = name_matches.first()
+                        menu_item.image = uploaded_file
+                        menu_item.save()
+                        success_count += 1
+                        success_messages.append(f"✅ {filename} → Assigned to {menu_item.name} (name match)")
+                    else:
+                        # No matches - file uploaded but not assigned
+                        success_count += 1
+                        success_messages.append(f"📁 {filename} → Uploaded, ready for manual assignment")
                     
             except Exception as e:
-                error_messages.append(f"❌ {filename}: Upload error - {str(e)}")
+                error_messages.append(f"❌ {uploaded_file.name}: Upload error - {str(e)}")
         
         # Add messages
         if success_count > 0:
