@@ -293,92 +293,80 @@ def site_images_manager(request):
         # Handle hero image upload
         if 'hero_image' in request.FILES:
             uploaded_file = request.FILES['hero_image']
-            if _validate_jpeg_file(uploaded_file):
-                if business_info:
-                    old_image = business_info.hero_image
-                    business_info.hero_image = uploaded_file
-                    business_info.save()
-                    success_messages.append("Hero image updated successfully!")
-                    
-                    # Delete old image file if it exists
-                    if old_image:
-                        try:
-                            old_image.delete(save=False)
-                        except:
-                            pass
-                else:
-                    error_messages.append("Business information not found. Please set up business info first.")
+            if business_info:
+                old_image = business_info.hero_image
+                business_info.hero_image = uploaded_file
+                business_info.save()
+                success_messages.append("Hero image updated successfully!")
+                
+                # Delete old image file if it exists
+                if old_image:
+                    try:
+                        old_image.delete(save=False)
+                    except:
+                        pass
             else:
-                error_messages.append("Please upload a JPEG image file only.")
+                error_messages.append("Business information not found. Please set up business info first.")
         
         # Handle menu decoration image upload
         if 'menu_decoration_image' in request.FILES:
             uploaded_file = request.FILES['menu_decoration_image']
-            if _validate_jpeg_file(uploaded_file):
-                if site_theme:
-                    old_image = site_theme.menu_decoration_image
-                    site_theme.menu_decoration_image = uploaded_file
-                    
-                    # Update alt text if provided
-                    alt_text = request.POST.get('menu_decoration_alt_text', '').strip()
-                    if alt_text:
-                        site_theme.menu_decoration_alt_text = alt_text
-                    
-                    site_theme.save()
-                    success_messages.append("Menu decoration image updated successfully!")
-                    
-                    # Delete old image file if it exists
-                    if old_image:
-                        try:
-                            old_image.delete(save=False)
-                        except:
-                            pass
-                else:
-                    error_messages.append("Site theme not found. Please set up site theme first.")
+            if site_theme:
+                old_image = site_theme.menu_decoration_image
+                site_theme.menu_decoration_image = uploaded_file
+                
+                # Update alt text if provided
+                alt_text = request.POST.get('menu_decoration_alt_text', '').strip()
+                if alt_text:
+                    site_theme.menu_decoration_alt_text = alt_text
+                
+                site_theme.save()
+                success_messages.append("Menu decoration image updated successfully!")
+                
+                # Delete old image file if it exists
+                if old_image:
+                    try:
+                        old_image.delete(save=False)
+                    except:
+                        pass
             else:
-                error_messages.append("Please upload a JPEG image file only.")
+                error_messages.append("Site theme not found. Please set up site theme first.")
         
         # Handle about image upload
         if 'about_image' in request.FILES:
             uploaded_file = request.FILES['about_image']
-            if _validate_jpeg_file(uploaded_file):
-                if business_info:
-                    old_image = business_info.about_image
-                    business_info.about_image = uploaded_file
-                    business_info.save()
-                    success_messages.append("About page image updated successfully!")
-                    
-                    # Delete old image file if it exists
-                    if old_image:
-                        try:
-                            old_image.delete(save=False)
-                        except:
-                            pass
-                else:
-                    error_messages.append("Business information not found. Please set up business info first.")
+            if business_info:
+                old_image = business_info.about_image
+                business_info.about_image = uploaded_file
+                business_info.save()
+                success_messages.append("About page image updated successfully!")
+                
+                # Delete old image file if it exists
+                if old_image:
+                    try:
+                        old_image.delete(save=False)
+                    except:
+                        pass
             else:
-                error_messages.append("Please upload a JPEG image file only.")
+                error_messages.append("Business information not found. Please set up business info first.")
         
         # Handle location image upload
         if 'location_image' in request.FILES:
             uploaded_file = request.FILES['location_image']
-            if _validate_jpeg_file(uploaded_file):
-                if business_info:
-                    old_image = business_info.location_image
-                    business_info.location_image = uploaded_file
-                    business_info.save()
-                    success_messages.append("Location page image updated successfully!")
-                    
-                    # Delete old image file if it exists
-                    if old_image:
-                        try:
-                            old_image.delete(save=False)
-                        except:
-                            pass
-                else:
-                    error_messages.append("Business information not found. Please set up business info first.")
+            if business_info:
+                old_image = business_info.location_image
+                business_info.location_image = uploaded_file
+                business_info.save()
+                success_messages.append("Location page image updated successfully!")
+                
+                # Delete old image file if it exists
+                if old_image:
+                    try:
+                        old_image.delete(save=False)
+                    except:
+                        pass
             else:
-                error_messages.append("Please upload a JPEG image file only.")
+                error_messages.append("Business information not found. Please set up business info first.")
         
         # Handle image deletions
         if request.POST.get('delete_hero_image') == 'true':
