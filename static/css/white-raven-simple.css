@@ -247,7 +247,8 @@ a:focus {
 
 /* Fix lead text in story content */
 .story-content .lead {
-    color: #495057 !important; /* Dark gray instead of light gray */
+    color: #343a40 !important; /* Even darker gray for better visibility */
+    font-weight: 500 !important; /* Slightly bolder for better readability */
 }
 
 /* Ensure proper contrast for placeholder text */
