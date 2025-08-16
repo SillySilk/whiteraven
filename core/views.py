@@ -373,3 +373,65 @@ def site_images_manager(request):
     }
     
     return render(request, 'core/site_images_manager.html', context)
+
+
+@staff_member_required
+def bulk_image_upload(request):
+    """
+    Bulk upload view for menu item images.
+    Allows uploading multiple images and automatically matching them to menu items.
+    """
+    if request.method == 'POST':
+        uploaded_files = request.FILES.getlist('bulk_images')
+        success_count = 0
+        error_messages = []
+        success_messages = []
+        
+        for uploaded_file in uploaded_files:
+            try:
+                # Extract item name from filename (remove extension)
+                filename = uploaded_file.name
+                item_name = os.path.splitext(filename)[0].replace('_', ' ').replace('-', ' ').title()
+                
+                # Try to find matching menu item by name (fuzzy matching)
+                menu_items = MenuItem.objects.filter(name__icontains=item_name.split()[0])
+                
+                if len(menu_items) == 1:
+                    # Exact match found
+                    menu_item = menu_items.first()
+                    menu_item.image = uploaded_file
+                    menu_item.save()
+                    success_count += 1
+                    success_messages.append(f"✅ {filename} → {menu_item.name}")
+                    
+                elif len(menu_items) > 1:
+                    # Multiple matches - let user choose
+                    error_messages.append(f"❓ {filename}: Multiple items match '{item_name}' - please upload manually")
+                    
+                else:
+                    # No match - suggest creating new item or manual upload
+                    error_messages.append(f"❌ {filename}: No menu item found for '{item_name}'")
+                    
+            except Exception as e:
+                error_messages.append(f"❌ {filename}: Upload error - {str(e)}")
+        
+        # Add messages
+        if success_count > 0:
+            messages.success(request, f"Successfully uploaded {success_count} images!")
+            for msg in success_messages:
+                messages.success(request, msg)
+        
+        for error_msg in error_messages:
+            messages.warning(request, error_msg)
+        
+        return redirect('core:bulk_upload')
+    
+    # GET request - show upload form
+    menu_items = MenuItem.objects.all().order_by('category__order', 'name')
+    
+    context = {
+        'menu_items': menu_items,
+        'page_title': 'Bulk Image Upload',
+    }
+    
+    return render(request, 'core/bulk_image_upload.html', context)
