@@ -199,8 +199,8 @@ cloudinary.config(
 if os.environ.get('PRODUCTION') == 'True':
     # Production: Use Cloudinary for persistent storage
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    MEDIA_URL = '/media/'  # Fallback for legacy URLs
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Fallback directory
+    # Let Cloudinary handle MEDIA_URL automatically
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Fallback directory for any legacy files
     
     # Enable WhiteNoise to serve any legacy media files as fallback
     WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'zip', 'gz', 'tgz', 'bz2', 'tbz', 'xz', 'br']
