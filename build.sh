@@ -14,6 +14,9 @@ python manage.py migrate
 # Load production data (only if database is empty)
 python load_production_data_corrected.py
 
+# Clear any broken image references to force fresh Cloudinary uploads
+python clear_broken_images.py
+
 # Ensure admin user is created and working
 python create_admin.py
 
