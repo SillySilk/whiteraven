@@ -12,7 +12,7 @@ django.setup()
 
 from core.models import BusinessInfo, SiteTheme
 from menu.models import Category, MenuItem
-from admin_interface.models import Theme
+# Removed admin_interface dependency
 from django.contrib.auth.models import User
 
 def clear_broken_image_references():
@@ -82,81 +82,7 @@ def main():
     )
     print(f"✓ Business info: {business_info.name}")
     
-    # Admin Theme - using actual field names from admin_interface.models.Theme
-    print("Setting up admin theme...")
-    Theme.objects.all().delete()  # Remove any existing themes
-    theme = Theme.objects.create(
-        name='White Raven Admin Theme',
-        active=True,
-        title='White Raven Pourhouse Admin',
-        title_color='#2c1810',
-        title_visible=True,
-        logo_color='#2c1810',
-        logo_max_width=400,
-        logo_max_height=100,
-        logo_visible=True,
-        env_name='Production',
-        env_color='#8B4513',
-        env_visible_in_header=True,
-        env_visible_in_favicon=False,
-        language_chooser_active=False,
-        language_chooser_control='select',
-        language_chooser_display='code',
-        
-        # Header colors
-        css_header_background_color='#2c1810',  # Dark coffee brown
-        css_header_text_color='#f5f5dc',        # Cream
-        css_header_link_color='#daa520',        # Gold
-        css_header_link_hover_color='#ffd700',  # Bright gold
-        
-        # Module colors
-        css_module_background_color='#4a3429',          # Medium coffee brown
-        css_module_background_selected_color='#6f4f28', # Darker brown
-        css_module_text_color='#f5f5dc',                # Cream
-        css_module_link_color='#daa520',                # Gold
-        css_module_link_selected_color='#ffd700',       # Bright gold
-        css_module_link_hover_color='#ffd700',          # Bright gold
-        css_module_rounded_corners=True,
-        
-        # Generic link colors
-        css_generic_link_color='#8B4513',         # Saddle brown
-        css_generic_link_hover_color='#a0522d',   # Sienna
-        css_generic_link_active_color='#6f4f28',  # Coffee brown
-        
-        # Button colors
-        css_save_button_background_color='#228B22',       # Forest green
-        css_save_button_background_hover_color='#32CD32', # Lime green
-        css_save_button_text_color='#ffffff',             # White
-        css_delete_button_background_color='#DC143C',     # Crimson
-        css_delete_button_background_hover_color='#FF6347', # Tomato
-        css_delete_button_text_color='#ffffff',           # White
-        
-        # Related modal
-        related_modal_active=True,
-        related_modal_background_color='#000000',
-        related_modal_background_opacity='0.3',
-        related_modal_rounded_corners=True,
-        related_modal_close_button_visible=True,
-        
-        # List filters
-        list_filter_highlight=True,
-        list_filter_dropdown=True,
-        list_filter_sticky=True,
-        list_filter_removal_links=False,
-        
-        # Interface options
-        foldable_apps=True,
-        show_fieldsets_as_tabs=False,
-        show_inlines_as_tabs=False,
-        collapsible_stacked_inlines=True,
-        collapsible_stacked_inlines_collapsed=False,
-        collapsible_tabular_inlines=True,
-        collapsible_tabular_inlines_collapsed=False,
-        recent_actions_visible=True,
-        form_submit_sticky=True,
-        form_pagination_sticky=True,
-    )
-    print(f"✓ Admin theme: {theme.name}")
+    # Admin interface package removed - using standard Django admin with custom CSS
     
     # Site Theme - using actual field names from core.models.SiteTheme
     print("Setting up site theme...")
@@ -283,7 +209,7 @@ def main():
     print("\nPublic Site: https://whiteraven.onrender.com/")
     print("\nAll database fields properly mapped:")
     print("• BusinessInfo: All 13+ fields including hours JSON, social URLs")
-    print("• Theme: All 54 admin interface fields with coffee colors")
+    print("• Admin: Using standard Django admin with custom CSS")
     print("• SiteTheme: All 23 frontend color fields")
     print("• Category: All 8 fields including slug, order, active")
     print("• MenuItem: All 17 fields including nutrition, dietary notes")
