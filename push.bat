@@ -36,13 +36,7 @@ echo Creating commit with auto-generated message...
 for /f "tokens=2-4 delims=/ " %%a in ('date /t') do (set mydate=%%c-%%a-%%b)
 for /f "tokens=1-2 delims=/:" %%a in ('time /t') do (set mytime=%%a:%%b)
 
-git commit -m "Auto commit - %mydate% %mytime%
-
-Updates and improvements to White Raven Pourhouse website.
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>"
+git commit -m "Auto commit - %mydate% %mytime% - Updates and improvements to White Raven Pourhouse website. Generated with Claude Code - Co-Authored-By: Claude <noreply@anthropic.com>"
 
 if %errorlevel% neq 0 (
     echo ERROR: Git commit failed!
