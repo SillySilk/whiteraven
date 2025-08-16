@@ -95,32 +95,24 @@ WSGI_APPLICATION = "white_raven_pourhouse.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Temporarily force SQLite for local development testing
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+# Database configuration
+if 'DATABASE_URL' in os.environ:
+    # Render PostgreSQL configuration
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
     }
-}
-
-# Production database configuration (commented out for local testing)
-# if 'DATABASE_URL' in os.environ:
-#     # Render PostgreSQL configuration
-#     DATABASES = {
-#         'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-#     }
-# elif os.environ.get('PRODUCTION') == 'True':
-#     # PythonAnywhere MySQL configuration
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.mysql',
-#             'NAME': os.environ.get('DB_NAME', 'username$database_name'),
-#             'USER': os.environ.get('DB_USER', 'username'),
-#             'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-#             'HOST': os.environ.get('DB_HOST', 'username.mysql.pythonanywhere-services.com'),
-#             'PORT': '',
-#         }
-#     }
+elif os.environ.get('PRODUCTION') == 'True':
+    # PythonAnywhere MySQL configuration
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ.get('DB_NAME', 'username$database_name'),
+            'USER': os.environ.get('DB_USER', 'username'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'username.mysql.pythonanywhere-services.com'),
+            'PORT': '',
+        }
+    }
 
 
 # Password validation

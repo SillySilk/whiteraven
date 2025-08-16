@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Database Debug Info{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Database Debug Information</h1>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Business Info Images</h3>
+                </div>
+                <div class="card-body">
+                    {% if business_info %}
+                        <p><strong>Hero Image:</strong> "{{ business_info.hero_image }}"</p>
+                        <p><strong>About Image:</strong> "{{ business_info.about_image }}"</p>
+                        <p><strong>Location Image:</strong> "{{ business_info.location_image }}"</p>
+                    {% else %}
+                        <p>No business info found</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Site Theme</h3>
+                </div>
+                <div class="card-body">
+                    {% if site_theme %}
+                        <p><strong>Menu Decoration:</strong> "{{ site_theme.menu_decoration_image }}"</p>
+                        <p><strong>Alt Text:</strong> "{{ site_theme.menu_decoration_alt_text }}"</p>
+                    {% else %}
+                        <p>No site theme found</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Menu Items with Images</h3>
+                </div>
+                <div class="card-body">
+                    {% if menu_items %}
+                        <p><strong>Total items with images:</strong> {{ menu_items.count }}</p>
+                        {% for item in menu_items %}
+                            <p>{{ item.name }}: "{{ item.image }}"</p>
+                        {% endfor %}
+                    {% else %}
+                        <p>No menu items with images found</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

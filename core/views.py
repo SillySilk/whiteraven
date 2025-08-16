@@ -486,6 +486,33 @@ def site_images_manager(request):
 
 
 @staff_member_required
+def debug_database(request):
+    """
+    Debug view to check what's actually in the remote database
+    """
+    try:
+        business_info = BusinessInfo.objects.first()
+    except:
+        business_info = None
+    
+    try:
+        site_theme = SiteTheme.get_active_theme()
+    except:
+        site_theme = None
+    
+    menu_items = MenuItem.objects.exclude(image='')
+    
+    context = {
+        'business_info': business_info,
+        'site_theme': site_theme,
+        'menu_items': menu_items,
+        'page_title': 'Database Debug',
+    }
+    
+    return render(request, 'core/debug_db.html', context)
+
+
+@staff_member_required
 def bulk_image_upload(request):
     """
     Bulk upload view for menu item images.

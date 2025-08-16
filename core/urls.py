@@ -11,4 +11,5 @@ urlpatterns = [
     path('api/status/', views.current_status_api, name='current_status_api'),
     path('site-images/', views.site_images_manager, name='site_images'),
     path('bulk-upload/', views.bulk_image_upload, name='bulk_upload'),
+    path('debug-db/', views.debug_database, name='debug_db'),
 ]
