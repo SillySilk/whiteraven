@@ -67,6 +67,13 @@ class BusinessInfo(models.Model):
         help_text="Hero image for the homepage (recommended size: 1200x600px)"
     )
     
+    about_image = models.ImageField(
+        upload_to='',
+        blank=True,
+        null=True,
+        help_text="Image for the About page story section (recommended size: 600x400px)"
+    )
+    
     # Social Media Links
     facebook_url = models.URLField(
         blank=True,

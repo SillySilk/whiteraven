@@ -19,7 +19,7 @@ class BusinessInfoAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('name', 'tagline', 'description', 'hero_image')
+            'fields': ('name', 'tagline', 'description', 'hero_image', 'about_image')
         }),
         ('Contact Details', {
             'fields': ('address', 'phone', 'email')
