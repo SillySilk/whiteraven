@@ -199,7 +199,7 @@ cloudinary.config(
 if os.environ.get('PRODUCTION') == 'True':
     # Production: Use Cloudinary for persistent storage
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    MEDIA_URL = '/media/'
+    # Cloudinary will handle MEDIA_URL automatically
 else:
     # Development: Use local storage
     MEDIA_URL = "/media/"
