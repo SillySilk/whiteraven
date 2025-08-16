@@ -36,23 +36,19 @@ SECRET_KEY = os.environ.get('SECRET_KEY', "django-insecure-ypppobm)sfyldd^vq4aiu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver').split(',')
+# Force localhost for local development
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver', 'whiteraven.onrender.com', 'www.whiteravenpourhouse.com']
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    "admin_interface",
-    "colorfield",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Cloudinary storage
-    "cloudinary_storage",
-    "cloudinary",
     # Local apps
     "core",
     "menu",
@@ -99,32 +95,32 @@ WSGI_APPLICATION = "white_raven_pourhouse.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Use DATABASE_URL if available (Render PostgreSQL), otherwise fallback
-if 'DATABASE_URL' in os.environ:
-    # Render PostgreSQL configuration
-    DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+# Temporarily force SQLite for local development testing
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
-elif os.environ.get('PRODUCTION') == 'True':
-    # PythonAnywhere MySQL configuration
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.environ.get('DB_NAME', 'username$database_name'),
-            'USER': os.environ.get('DB_USER', 'username'),
-            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-            'HOST': os.environ.get('DB_HOST', 'username.mysql.pythonanywhere-services.com'),
-            'PORT': '',
-        }
-    }
-else:
-    # Development SQLite configuration
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+}
+
+# Production database configuration (commented out for local testing)
+# if 'DATABASE_URL' in os.environ:
+#     # Render PostgreSQL configuration
+#     DATABASES = {
+#         'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+#     }
+# elif os.environ.get('PRODUCTION') == 'True':
+#     # PythonAnywhere MySQL configuration
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.mysql',
+#             'NAME': os.environ.get('DB_NAME', 'username$database_name'),
+#             'USER': os.environ.get('DB_USER', 'username'),
+#             'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+#             'HOST': os.environ.get('DB_HOST', 'username.mysql.pythonanywhere-services.com'),
+#             'PORT': '',
+#         }
+#     }
 
 
 # Password validation
@@ -176,24 +172,7 @@ else:
     STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
-# Cloudinary configuration for persistent image storage
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
-
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'dturwm5za'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '423825422946229'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', '0PWTYCAylXuGUiKOwhS1eX6rBPY'),
-}
-
-# Configure Cloudinary
-cloudinary.config(
-    cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
-    api_key=CLOUDINARY_STORAGE['API_KEY'],
-    api_secret=CLOUDINARY_STORAGE['API_SECRET'],
-    secure=True
-)
+# Simple Django file uploads (removed Cloudinary complexity)
 
 # Simple media file configuration
 MEDIA_URL = "/media/"
@@ -247,7 +226,7 @@ if os.environ.get('PRODUCTION') == 'True':
     CSP_SCRIPT_SRC = ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "cdnjs.cloudflare.com"]
     CSP_STYLE_SRC = ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "fonts.googleapis.com"]
     CSP_FONT_SRC = ["'self'", "fonts.gstatic.com", "cdn.jsdelivr.net"]
-    CSP_IMG_SRC = ["'self'", "data:", "blob:", "res.cloudinary.com", "*.cloudinary.com"]
+    CSP_IMG_SRC = ["'self'", "data:", "blob:"]
     CSP_CONNECT_SRC = ["'self'"]
     CSP_FRAME_ANCESTORS = ["'none'"]
     CSP_BASE_URI = ["'self'"]
@@ -274,7 +253,7 @@ else:
     CSP_SCRIPT_SRC = ["'self'", "'unsafe-inline'", "'unsafe-eval'", "cdn.jsdelivr.net"]
     CSP_STYLE_SRC = ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "fonts.googleapis.com"]
     CSP_FONT_SRC = ["'self'", "fonts.gstatic.com", "cdn.jsdelivr.net"]
-    CSP_IMG_SRC = ["'self'", "data:", "blob:", "res.cloudinary.com", "*.cloudinary.com"]
+    CSP_IMG_SRC = ["'self'", "data:", "blob:"]
     
     # Rate limiting (more permissive for development)
     RATE_LIMIT_LOGIN = 10

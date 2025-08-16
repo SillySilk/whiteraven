@@ -236,9 +236,9 @@ def create_multiple_sizes(image_file, base_name):
                     
                     img_for_format.save(buffer, **save_kwargs)
                     
-                    # Save to storage
+                    # Save to storage (flat structure)
                     file_content = ContentFile(buffer.getvalue())
-                    file_path = default_storage.save(f"menu/{filename}", file_content)
+                    file_path = default_storage.save(filename, file_content)
                     
                     results[f"{size_name}_{ext}"] = {
                         'path': file_path,
@@ -358,26 +358,17 @@ def generate_placeholder_image(text, size=(400, 300), color_index=0):
 def get_image_upload_path(instance, filename):
     """
     Generate upload path for menu item images.
+    Uses flat structure without subfolders.
     
     Args:
         instance: MenuItem model instance
         filename: Original filename
         
     Returns:
-        str: Upload path
+        str: Upload path (flat structure)
     """
-    # Get file extension
-    ext = os.path.splitext(filename)[1].lower()
-    
-    # Generate new filename based on menu item
-    if instance.slug:
-        base_name = instance.slug
-    else:
-        # Fallback to cleaned name
-        import re
-        base_name = re.sub(r'[^\w\-]', '', instance.name.lower().replace(' ', '-'))
-    
-    return f"menu/{base_name}{ext}"
+    # Preserve original filename for flexibility
+    return filename
 
 
 def cleanup_old_images(old_image_path):
@@ -455,9 +446,9 @@ def ensure_placeholder_exists(menu_item):
             color_index=color_index
         )
         
-        # Save placeholder
+        # Save placeholder (flat structure)
         filename = f"placeholder_{menu_item.slug or menu_item.id}.jpg"
-        placeholder_path = default_storage.save(f"menu/placeholders/{filename}", placeholder_image)
+        placeholder_path = default_storage.save(filename, placeholder_image)
         
         # Update menu item (note: this should be done carefully to avoid recursion)
         menu_item.image.name = placeholder_path

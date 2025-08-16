@@ -63,7 +63,9 @@
       "Bash(set PRODUCTION=False)",
       "Bash(move .env.render .env.render.bak)",
       "Bash(mv:*)",
-      "Bash(\"venv\\Scripts\\pip.exe\" install cloudinary django-cloudinary-storage)"
+      "Bash(\"venv\\Scripts\\pip.exe\" install cloudinary django-cloudinary-storage)",
+      "Bash(move whiteraven.env whiteraven.env.bak)",
+      "Bash(set)"
     ],
     "deny": []
   }

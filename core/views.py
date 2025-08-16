@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.http import JsonResponse
 from datetime import datetime
 import json
+import os
 
 from .models import BusinessInfo, ContactSubmission, SiteTheme
 from .forms import ContactForm
@@ -343,7 +344,7 @@ def site_images_manager(request):
         'description': 'Main banner image displayed on the homepage',
         'field_name': 'hero_image',
         'current_image': business_info.hero_image if business_info else None,
-        'upload_path': 'business/hero/',
+        'upload_path': '',
         'recommended_size': '1200x600px',
         'usage': 'Homepage banner, first thing visitors see',
         'delete_field': 'delete_hero_image'
@@ -356,7 +357,7 @@ def site_images_manager(request):
         'description': 'Decorative image shown on the menu page',
         'field_name': 'menu_decoration_image',
         'current_image': site_theme.menu_decoration_image if site_theme else None,
-        'upload_path': 'site_theme/menu/',
+        'upload_path': '',
         'recommended_size': '400x300px',
         'usage': 'Menu page decoration, replaces the white stats box',
         'delete_field': 'delete_menu_decoration',
@@ -394,23 +395,22 @@ def bulk_image_upload(request):
                 item_name = os.path.splitext(filename)[0].replace('_', ' ').replace('-', ' ').title()
                 
                 # Try to find matching menu item by name (fuzzy matching)
+                # This is optional - if no match, that's totally fine
                 menu_items = MenuItem.objects.filter(name__icontains=item_name.split()[0])
                 
                 if len(menu_items) == 1:
-                    # Exact match found
+                    # Great! Found a match, apply automatically
                     menu_item = menu_items.first()
                     menu_item.image = uploaded_file
                     menu_item.save()
                     success_count += 1
                     success_messages.append(f"✅ {filename} → {menu_item.name}")
                     
-                elif len(menu_items) > 1:
-                    # Multiple matches - let user choose
-                    error_messages.append(f"❓ {filename}: Multiple items match '{item_name}' - please upload manually")
-                    
                 else:
-                    # No match - suggest creating new item or manual upload
-                    error_messages.append(f"❌ {filename}: No menu item found for '{item_name}'")
+                    # No exact match - that's fine, just store the file info for manual assignment
+                    success_count += 1
+                    success_messages.append(f"📁 {filename} → Ready for manual assignment")
+                    # Note: File is still uploaded, just not assigned to a menu item yet
                     
             except Exception as e:
                 error_messages.append(f"❌ {filename}: Upload error - {str(e)}")

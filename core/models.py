@@ -61,7 +61,7 @@ class BusinessInfo(models.Model):
     )
     
     hero_image = models.ImageField(
-        upload_to='business/hero/',
+        upload_to='',
         blank=True,
         null=True,
         help_text="Hero image for the homepage (recommended size: 1200x600px)"
@@ -525,7 +525,7 @@ class SiteTheme(models.Model):
     
     # Menu page decoration image
     menu_decoration_image = models.ImageField(
-        upload_to='site_theme/menu/',
+        upload_to='',
         blank=True,
         null=True,
         help_text="Decorative image for menu page (replaces the white stats box). Recommended size: 400x300px"
