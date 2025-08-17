@@ -2,6 +2,23 @@ from django.db import models
 from django.core.validators import RegexValidator
 from colorfield.fields import ColorField
 
+
+def preserve_filename_upload(instance, filename):
+    """
+    Custom upload function that preserves the original filename.
+    Files are saved directly to the media root with their original names.
+    This prevents Django's automatic renaming and allows predictable file paths.
+    """
+    return filename
+
+
+def site_theme_upload(instance, filename):
+    """
+    Custom upload function for site theme images.
+    Preserves original filename for predictable file paths.
+    """
+    return filename
+
 class BusinessInfo(models.Model):
     """
     Store basic business information for White Raven Pourhouse.
@@ -61,21 +78,21 @@ class BusinessInfo(models.Model):
     )
     
     hero_image = models.ImageField(
-        upload_to='',
+        upload_to=preserve_filename_upload,
         blank=True,
         null=True,
         help_text="Hero image for the homepage (recommended size: 1200x600px)"
     )
     
     about_image = models.ImageField(
-        upload_to='',
+        upload_to=preserve_filename_upload,
         blank=True,
         null=True,
         help_text="Image for the About page story section (recommended size: 600x400px)"
     )
     
     location_image = models.ImageField(
-        upload_to='',
+        upload_to=preserve_filename_upload,
         blank=True,
         null=True,
         help_text="Image for the Location page header (recommended size: 600x400px)"
@@ -539,7 +556,7 @@ class SiteTheme(models.Model):
     
     # Menu page decoration image
     menu_decoration_image = models.ImageField(
-        upload_to='',
+        upload_to=site_theme_upload,
         blank=True,
         null=True,
         help_text="Decorative image for menu page (replaces the white stats box). Recommended size: 400x300px"
